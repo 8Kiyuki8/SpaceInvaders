@@ -34,13 +34,11 @@ public class VentanaAdministradora {
     return ventana;
   }
 
-  public static JButton crearBotonDeInicioDeJuego(VentanaPrincipal ventanaPrincipal) {
-    JButton botónDeInicio = new JButton();
-    botónDeInicio.setBounds(100, 100, 125, 50);
-    botónDeInicio.addActionListener(ventanaPrincipal);
-    botónDeInicio.setText("Iniciar Juego");
-    botónDeInicio.setFocusable(false);
-    ventanaPrincipal.add(botónDeInicio);
-    return botónDeInicio;
+  public static int obtenerAnchoVentana() {
+    return ANCHO_VENTANA;
+  }
+
+  public static int obtenerAltoVentana() {
+    return ALTO_VENTANA;
   }
 }

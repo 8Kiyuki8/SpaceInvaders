@@ -1,24 +1,34 @@
 package Presentación.Ventanas;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.*;
 
-public class VentanaPrincipal extends JPanel implements ActionListener {
+public class VentanaPrincipal extends JPanel {
   private static volatile VentanaPrincipal instancia;
   private final JFrame ventana;
-  private JButton botónDeInicio;
 
   private VentanaPrincipal() {
     configurarVentana();
     ventana = VentanaAdministradora.crearVentana(this);
-
-    botónDeInicio = VentanaAdministradora.crearBotonDeInicioDeJuego(this);
   }
 
   private void configurarVentana() {
     setBackground(Color.BLACK);
+    add(crearBotónIniciarJuego());
+  }
+
+  private JPanel crearBotónIniciarJuego() {
+    JPanel panel = new JPanel();
+    JButton botón = new JButton("Iniciar Juego");
+    botón.setPreferredSize(new Dimension(100, 50));
+    botón.addActionListener(e -> abrirVentanaJuego());
+    panel.add(botón);
+    return panel;
+  }
+
+  private void abrirVentanaJuego() {
+    VentanaJuego ventanaJuego = new VentanaJuego();
+    VentanaAdministradora.crearVentana(ventanaJuego);
   }
 
   public static VentanaPrincipal obtenerVentana() {
@@ -32,14 +42,6 @@ public class VentanaPrincipal extends JPanel implements ActionListener {
       }
     }
     return ventanaPrincipal;
-  }
-
-  @Override
-  public void actionPerformed(ActionEvent acción) {
-    if (acción.getSource() == botónDeInicio) {
-      ventana.dispose();
-      VentanaDeJuego ventanaDeJuego = new VentanaDeJuego();
-    }
   }
 }
 
