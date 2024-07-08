@@ -16,20 +16,16 @@ public class VentanaPrincipal extends JPanel {
     setBackground(Color.BLACK);
   }
 
-  public static VentanaPrincipal obtenerInstancia() {
-    VentanaPrincipal gameWindowResult = instancia;
-    if (gameWindowResult == null) {
+  public static VentanaPrincipal obtenerVentana() {
+    VentanaPrincipal ventanaPrincipal = instancia;
+    if (ventanaPrincipal == null) {
       synchronized (VentanaPrincipal.class) {
-        gameWindowResult = instancia;
-        if (gameWindowResult == null) {
-          instancia = gameWindowResult = new VentanaPrincipal();
+        ventanaPrincipal = instancia;
+        if (ventanaPrincipal == null) {
+          instancia = ventanaPrincipal = new VentanaPrincipal();
         }
       }
     }
-    return gameWindowResult;
-  }
-
-  public JFrame obtenerVentana() {
-    return ventana;
+    return ventanaPrincipal;
   }
 }
