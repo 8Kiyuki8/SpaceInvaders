@@ -41,4 +41,8 @@ public class VentanaAdministradora {
   public static int obtenerAltoVentana() {
     return ALTO_VENTANA;
   }
+
+  public static int obtenerTamañoEntidad() {
+    return TAMAÑO_ENTIDAD;
+  }
 }
