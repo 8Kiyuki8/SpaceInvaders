@@ -11,8 +11,10 @@ public class NaveJugador extends Nave {
 
   public NaveJugador(AdministradorEventoTeclas administradorTeclas) {
     this.administradorTeclas = administradorTeclas;
-    posiciónX = (VentanaAdministradora.obtenerAnchoVentana() / 2) - 25;
-    posiciónY = VentanaAdministradora.obtenerAltoVentana() - 100;
+    posiciónX = (VentanaAdministradora.obtenerAnchoVentana() / 2) -
+      (VentanaAdministradora.obtenerTamañoEntidad() / 2);
+    posiciónY = VentanaAdministradora.obtenerAltoVentana() -
+      (VentanaAdministradora.obtenerTamañoEntidad() * 2);
   }
 
   public void actualizarMovimiento() {

@@ -1,36 +1,32 @@
 package Presentación.Ventanas;
 
 import Lógica.Entidades.NaveJugador;
-import Presentación.Servicios.AdministradorArchivos;
+import Presentación.Pintores.PintorJugador;
+import Presentación.Pintores.PintorEnemigo;
 import Lógica.Servicios.AdministradorEventoTeclas;
 
 import java.awt.*;
 import javax.swing.*;
 import java.util.*;
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 
 public class VentanaJuego extends JPanel implements Runnable {
   public static final int FPS_JUEGO = 60;
-  public static final int NÚMERO_MÁXIMO_SPRITES_ENTIDAD = 4;
 
-  private final ArrayList<BufferedImage> imágenesNaveJugador = new ArrayList<>();
+  private final PintorJugador pintorJugador = new PintorJugador("Jugador");
+  private final ArrayList<PintorEnemigo> pintorEnemigos;
+
   private final AdministradorEventoTeclas administradorTeclas = new AdministradorEventoTeclas();
   private final NaveJugador naveJugador = new NaveJugador(administradorTeclas);
-
-  private int índiceActualImagen = 0;
-  private long últimaActualización = System.nanoTime();
 
   private Thread hiloJuego;
 
   public VentanaJuego() {
+    pintorEnemigos = new ArrayList<>();
+    pintorEnemigos.add(new PintorEnemigo("Azul"));
+    pintorEnemigos.add(new PintorEnemigo("IndexOutOfBounds"));
+    pintorEnemigos.add(new PintorEnemigo("NullPointerException"));
+
     configurarVentana();
-    try {
-      configurarSpritesJugador();
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
     addKeyListener(administradorTeclas);
     iniciarHiloJuego();
   }
@@ -40,41 +36,28 @@ public class VentanaJuego extends JPanel implements Runnable {
     setFocusable(true);
   }
 
-  private void configurarSpritesJugador() throws IOException {
-    AdministradorArchivos administradorArchivos = new AdministradorArchivos();
-    for (int i = 0; i < NÚMERO_MÁXIMO_SPRITES_ENTIDAD; i++) {
-      String nombreRecurso = administradorArchivos.obtenerURLRecurso("Jugador", i);
-      imágenesNaveJugador.add(ImageIO.read(
-        Objects.requireNonNull(getClass().getResourceAsStream(nombreRecurso)))
-      );
-    }
-  }
-
   public void iniciarHiloJuego() {
     hiloJuego = new Thread(this);
     hiloJuego.start();
   }
 
-  public void actualizarImagen() {
-    long tiempoActual = System.nanoTime();
-    if ((tiempoActual - últimaActualización) >= 100000000) {
-      índiceActualImagen = (índiceActualImagen + 1) % imágenesNaveJugador.size();
-      últimaActualización = tiempoActual;
-    }
-  }
-
   public void update() {
-    actualizarImagen();
     naveJugador.actualizarMovimiento();
+    pintorJugador.actualizarImagenEntidad();
+    for (PintorEnemigo pintorEnemigo : pintorEnemigos) {
+      pintorEnemigo.actualizarImagenEntidad();
+    }
   }
 
   protected void paintComponent(Graphics graphics) {
     super.paintComponent(graphics);
-    Graphics2D g2d = (Graphics2D) graphics;
-    g2d.drawImage(imágenesNaveJugador.get(índiceActualImagen), naveJugador.obtenerPosiciónX(),
-      naveJugador.obtenerPosiciónY(),
-      null);
-    g2d.dispose();
+    Graphics2D graphics2D = (Graphics2D) graphics;
+    for (int i = 0; i < pintorEnemigos.size(); i += 1) {
+      pintorEnemigos.get(i).dibujar(graphics2D, i + 1, 0, 0);
+    }
+    pintorJugador.dibujar(graphics2D, null, naveJugador.obtenerPosiciónX(),
+      naveJugador.obtenerPosiciónY());
+    graphics2D.dispose();
   }
 
   @Override
