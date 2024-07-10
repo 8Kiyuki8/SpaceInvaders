@@ -1,0 +1,120 @@
+@startuml
+abstract class Recurso {
+    - recurso : String
+    +obtenerRecurso()
+}
+
+class Interfaz {
+    +desplegarRecurso(Recurso)
+}
+class RecursoObstaculo
+class RecursoEnemigo
+class RecursoJugador
+class RecursoOvni
+class RecursoMisil
+
+class SpaceInvaders {
+    -enemigos[] : Enemigo
+    -jugador : Jugador
+    -ovni : Ovni
+    +iniciarJuego() : void
+    +obtenerPuntuación() : Puntuación
+    +finalizarJuego() : void
+    +calcularPuntaje() : void
+    +mostrarResultadosDePartida(Puntuación, Tiempo) : void
+}
+class Tiempo {
+    -milisegundos : long
+    +obtenerMilisegundos() : long
+}
+class Puntuación {
+    -puntaje : int
+    +obtenerPuntuación() : int
+}
+
+abstract class Nave {
+    -velocidad : int
+
+}
+class Enemigo {
+    +disparar() : Misil
+}
+class Jugador{
+    -puntaje : Puntuación
+    +disparar() : Misil
+    +incrementarPuntaje() : void
+    +obtenerPuntaje() : Puntuación
+}
+class Ovni
+abstract class Vida {
+    -vida : int
+    +obtenerVida() : int
+}
+
+abstract class PowerUp
+
+class Misil {
+    -numeroMisiles : int
+    +obtenerNumeroMisiles() : int
+}
+
+abstract class Movimiento {
+    -izquierda : int
+    -derecha : int
+    +moverDerecha() : Movimiento
+    +moverIzquierda() : Movimiento
+}
+class MovimientoJugador
+class MovimientoEnemigo {
+    -abajo : int
+    +moverAbajo() : Movimiento
+}
+
+class VidaPowerUp {
+    +aumentarVida() : void
+}
+
+class MisilPowerUp {
+    +duplicarMisil() : void
+}
+
+class VelocidadPowerUp {
+    +aumentarVelocidad() : void
+}
+
+SpaceInvaders --> Nave
+SpaceInvaders -left-> Tiempo
+SpaceInvaders -right-> Puntuación
+
+Jugador -|>  Nave
+Nave <|-- Enemigo
+Ovni -l-|> Nave
+Jugador --l-> PowerUp
+Ovni --> "1" Vida
+
+Enemigo --> "1" Vida
+Jugador --> "1..3   " Vida
+
+VidaPowerUp -u-|> PowerUp
+MisilPowerUp -u-|> PowerUp
+PowerUp <|-l- VelocidadPowerUp
+
+Movimiento <|-- MovimientoJugador
+Movimiento <|-- MovimientoEnemigo
+
+Nave --> Movimiento
+Nave --r> Misil
+
+RecursoEnemigo -u-|> Recurso
+RecursoOvni -u-|> Recurso
+RecursoJugador -u-|> Recurso
+RecursoObstaculo -u-|> Recurso
+RecursoMisil -u-|> Recurso
+
+Interfaz -u-> RecursoMisil
+Interfaz -u-> RecursoJugador
+Interfaz -u-> RecursoOvni
+Interfaz -u-> RecursoEnemigo
+Interfaz -u-> RecursoObstaculo
+SpaceInvaders -u-> Interfaz
+@enduml
