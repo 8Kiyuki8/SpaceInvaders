@@ -6,7 +6,10 @@ import Presentación.Pintores.PintorEnemigo;
 import Lógica.Servicios.AdministradorEventoTeclas;
 
 import java.awt.*;
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.*;
 
 public class VentanaJuego extends JPanel implements Runnable {
@@ -19,6 +22,7 @@ public class VentanaJuego extends JPanel implements Runnable {
   private final NaveJugador naveJugador = new NaveJugador(administradorTeclas);
 
   private Thread hiloJuego;
+  private BufferedImage fondoJuego;
 
   public VentanaJuego() {
     pintorEnemigos = new ArrayList<>();
@@ -27,14 +31,25 @@ public class VentanaJuego extends JPanel implements Runnable {
     pintorEnemigos.add(new PintorEnemigo("NullPointerException"));
 
     configurarVentana();
+    cargarImagenDeFondo();
+    setFocusable(true);
     addKeyListener(administradorTeclas);
     iniciarHiloJuego();
   }
 
   private void configurarVentana() {
-    setBackground(Color.BLACK);
-    setFocusable(true);
+    //setBackground(Color.GREEN);
+    setPreferredSize(new Dimension(800, 600));
   }
+
+  private void cargarImagenDeFondo() {
+    try {
+      fondoJuego = ImageIO.read(getClass().getResource("/Presentación/Recursos/FondoDeJuego/fondodejuego.png"));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
 
   public void iniciarHiloJuego() {
     hiloJuego = new Thread(this);
@@ -51,6 +66,7 @@ public class VentanaJuego extends JPanel implements Runnable {
 
   protected void paintComponent(Graphics graphics) {
     super.paintComponent(graphics);
+    graphics.drawImage(fondoJuego, 0, 0, null);
     Graphics2D graphics2D = (Graphics2D) graphics;
     for (int i = 0; i < pintorEnemigos.size(); i += 1) {
       pintorEnemigos.get(i).dibujar(graphics2D, i + 1, 0, 0);
