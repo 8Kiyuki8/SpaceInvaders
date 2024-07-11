@@ -16,9 +16,9 @@ public class PintorEnemigo extends PintorEntidad {
     cargarMapaEnemigo("/Presentación/Recursos/Mapa/mapa_enemigos.txt");
   }
 
-  public void cargarMapaEnemigo(String mapPath) {
+  public void cargarMapaEnemigo(String mapa) {
     try {
-      InputStream inputStream = getClass().getResourceAsStream(mapPath);
+      InputStream inputStream = getClass().getResourceAsStream(mapa);
       BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
       ArrayList<int[]> líneasNúmerosInt = new ArrayList<>();

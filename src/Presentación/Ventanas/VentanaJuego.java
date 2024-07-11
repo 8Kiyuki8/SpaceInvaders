@@ -6,11 +6,11 @@ import Presentación.Pintores.PintorEnemigo;
 import Lógica.Servicios.AdministradorEventoTeclas;
 
 import java.awt.*;
-import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.util.*;
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.*;
 
 public class VentanaJuego extends JPanel implements Runnable {
   public static final int FPS_JUEGO = 60;
@@ -44,12 +44,12 @@ public class VentanaJuego extends JPanel implements Runnable {
 
   private void cargarImagenDeFondo() {
     try {
-      fondoJuego = ImageIO.read(getClass().getResource("/Presentación/Recursos/FondoDeJuego/fondodejuego.png"));
+      fondoJuego = ImageIO.read(Objects.requireNonNull(
+        getClass().getResource("/Presentación/Recursos/FondoDeJuego/fondodejuego.png")));
     } catch (IOException e) {
       e.printStackTrace();
     }
   }
-
 
   public void iniciarHiloJuego() {
     hiloJuego = new Thread(this);
@@ -57,7 +57,7 @@ public class VentanaJuego extends JPanel implements Runnable {
   }
 
   public void update() {
-    naveJugador.actualizarMovimiento();
+    naveJugador.obtenerMovimiento().actualizarMovimiento();
     pintorJugador.actualizarImagenEntidad();
     for (PintorEnemigo pintorEnemigo : pintorEnemigos) {
       pintorEnemigo.actualizarImagenEntidad();
@@ -71,8 +71,8 @@ public class VentanaJuego extends JPanel implements Runnable {
     for (int i = 0; i < pintorEnemigos.size(); i += 1) {
       pintorEnemigos.get(i).dibujar(graphics2D, i + 1, 0, 0);
     }
-    pintorJugador.dibujar(graphics2D, null, naveJugador.obtenerPosiciónX(),
-      naveJugador.obtenerPosiciónY());
+    pintorJugador.dibujar(graphics2D, null, naveJugador.obtenerMovimiento().obtenerPosiciónX(),
+      naveJugador.obtenerMovimiento().obtenerPosiciónY());
     graphics2D.dispose();
   }
 
