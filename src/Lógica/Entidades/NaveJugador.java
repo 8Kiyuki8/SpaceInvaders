@@ -6,15 +6,15 @@ import Presentación.Ventanas.VentanaAdministradora;
 
 public class NaveJugador extends Nave {
   private AdministradorEventoTeclas administradorTeclas;
-  private int posiciónX, posiciónY;
+  private int posiciónX, posiciónY, nuevaPosiciónX;
   private final int velocidad = 4;
+  private final int anchoNave = VentanaAdministradora.obtenerTamañoEntidad();
+  private final int altoNave = VentanaAdministradora.obtenerTamañoEntidad();
 
   public NaveJugador(AdministradorEventoTeclas administradorTeclas) {
     this.administradorTeclas = administradorTeclas;
-    posiciónX = (VentanaAdministradora.obtenerAnchoVentana() / 2) -
-      (VentanaAdministradora.obtenerTamañoEntidad() / 2);
-    posiciónY = VentanaAdministradora.obtenerAltoVentana() -
-      (VentanaAdministradora.obtenerTamañoEntidad() * 2);
+    posiciónX = (VentanaAdministradora.obtenerAnchoVentana() / 2) - (anchoNave / 2);
+    posiciónY = VentanaAdministradora.obtenerAltoVentana() - (altoNave * 2);
   }
 
   public void actualizarMovimiento() {
@@ -22,12 +22,20 @@ public class NaveJugador extends Nave {
     if (dirección == null) {
       return;
     }
-
+    nuevaPosiciónX = posiciónX;
     if (dirección == Movimiento.DERECHA) {
-      posiciónX += velocidad;
+      nuevaPosiciónX += velocidad;
     } else if (dirección == Movimiento.IZQUIERDA) {
-      posiciónX -= velocidad;
+      nuevaPosiciónX -= velocidad;
     }
+
+    if (nuevaPosiciónX < 0) {
+      nuevaPosiciónX = 0;
+    } else if (nuevaPosiciónX + anchoNave > VentanaAdministradora.obtenerAnchoVentana()) {
+      nuevaPosiciónX = VentanaAdministradora.obtenerAnchoVentana() - anchoNave;
+    }
+
+    posiciónX = nuevaPosiciónX;
   }
 
   public int obtenerPosiciónX() {
