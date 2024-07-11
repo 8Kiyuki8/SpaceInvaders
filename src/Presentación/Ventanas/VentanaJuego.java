@@ -38,8 +38,7 @@ public class VentanaJuego extends JPanel implements Runnable {
   }
 
   private void configurarVentana() {
-    //setBackground(Color.GREEN);
-    setPreferredSize(new Dimension(800, 600));
+    setPreferredSize(new Dimension(600, 600));
   }
 
   private void cargarImagenDeFondo() {
@@ -66,7 +65,7 @@ public class VentanaJuego extends JPanel implements Runnable {
 
   protected void paintComponent(Graphics graphics) {
     super.paintComponent(graphics);
-    graphics.drawImage(fondoJuego, 0, 0, null);
+    graphics.drawImage(fondoJuego, 0, 0, getWidth(), getHeight(), this);
     Graphics2D graphics2D = (Graphics2D) graphics;
     for (int i = 0; i < pintorEnemigos.size(); i += 1) {
       pintorEnemigos.get(i).dibujar(graphics2D, i + 1, 0, 0);
