@@ -1,8 +1,6 @@
 package Lógica.Entidades;
 
-import Lógica.Enumeraciones.Movimiento;
 import Lógica.Servicios.AdministradorEventoTeclas;
-import Presentación.Ventanas.VentanaAdministradora;
 
 public class NaveJugador extends Nave {
   private AdministradorEventoTeclas administradorTeclas;

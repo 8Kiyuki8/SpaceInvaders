@@ -1,5 +1,5 @@
 package Lógica.Enumeraciones;
 
-public enum Movimiento {
+public enum Dirección {
   IZQUIERDA, DERECHA
 }

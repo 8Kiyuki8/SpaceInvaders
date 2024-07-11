@@ -1,23 +1,23 @@
 package Lógica.Servicios;
 
-import Lógica.Enumeraciones.Movimiento;
+import Lógica.Enumeraciones.Dirección;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.HashMap;
 
 public class AdministradorEventoTeclas implements KeyListener {
-  private final HashMap<Integer, Movimiento> teclaDirección = new HashMap<>();
-  private Movimiento direcciónMovimiento = null;
+  private final HashMap<Integer, Dirección> teclaDirección = new HashMap<>();
+  private Dirección direcciónMovimiento = null;
 
   public AdministradorEventoTeclas() {
-    teclaDirección.put(KeyEvent.VK_A, Movimiento.IZQUIERDA);
-    teclaDirección.put(KeyEvent.VK_LEFT, Movimiento.IZQUIERDA);
-    teclaDirección.put(KeyEvent.VK_D, Movimiento.DERECHA);
-    teclaDirección.put(KeyEvent.VK_RIGHT, Movimiento.DERECHA);
+    teclaDirección.put(KeyEvent.VK_A, Dirección.IZQUIERDA);
+    teclaDirección.put(KeyEvent.VK_LEFT, Dirección.IZQUIERDA);
+    teclaDirección.put(KeyEvent.VK_D, Dirección.DERECHA);
+    teclaDirección.put(KeyEvent.VK_RIGHT, Dirección.DERECHA);
   }
 
-  public Movimiento obtenerDirecciónMovimiento() {
+  public Dirección obtenerDirecciónMovimiento() {
     return direcciónMovimiento;
   }
 
