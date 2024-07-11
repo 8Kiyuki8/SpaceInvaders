@@ -8,12 +8,23 @@ import java.util.*;
 
 public class PintorEnemigo extends PintorEntidad {
   private int[][] mapaNúmerosEntidad;
+  private static final int RENDERIZADO_ENEMIGO = 48;
+  private long últimaActualización = System.nanoTime();
 
   public PintorEnemigo(String nombre) {
     super(nombre);
     mapaNúmerosEntidad =
       new int[VentanaAdministradora.obtenerAnchoVentana()][VentanaAdministradora.obtenerAltoVentana()];
     cargarMapaEnemigo("/Presentación/Recursos/Mapa/mapa_enemigos.txt");
+  }
+
+  @Override
+  public void actualizarImagenEntidad() {
+    long tiempoActual = System.nanoTime();
+    if ((tiempoActual - últimaActualización) >= RENDERIZADO_ENEMIGO * 10000000) {
+      índiceActualImagen = (índiceActualImagen + 1) % NÚMERO_MÁXIMO_SPRITES_ENTIDAD;
+      últimaActualización = tiempoActual;
+    }
   }
 
   public void cargarMapaEnemigo(String mapa) {
