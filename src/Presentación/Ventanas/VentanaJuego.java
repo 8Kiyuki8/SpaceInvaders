@@ -38,7 +38,8 @@ public class VentanaJuego extends JPanel implements Runnable {
   }
 
   private void configurarVentana() {
-    setPreferredSize(new Dimension(600, 600));
+    setPreferredSize(new Dimension(
+      VentanaAdministradora.obtenerAnchoVentana(), VentanaAdministradora.obtenerAltoVentana()));
   }
 
   private void cargarImagenDeFondo() {

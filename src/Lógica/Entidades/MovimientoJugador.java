@@ -16,21 +16,19 @@ public class MovimientoJugador extends Movimiento {
   }
 
   @Override
-
   public void actualizarMovimiento() {
     Dirección dirección = administradorTeclas.obtenerDirecciónMovimiento();
     if (dirección == null) {
       return;
     }
 
-    int nuevaPosiciónX = obtenerPosiciónX();
+    int nuevaPosiciónX;
     if (dirección == Dirección.DERECHA) {
       moverDerecha();
-      nuevaPosiciónX += obtenerPosiciónX();
     } else if (dirección == Dirección.IZQUIERDA) {
       moverIzquierda();
-      nuevaPosiciónX -= obtenerPosiciónX();
     }
+    nuevaPosiciónX = obtenerPosiciónX();
 
     if (nuevaPosiciónX < 0) {
       nuevaPosiciónX = 0;

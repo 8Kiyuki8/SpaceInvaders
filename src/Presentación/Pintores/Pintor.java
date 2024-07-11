@@ -3,7 +3,7 @@ package Presentación.Pintores;
 public abstract class Pintor {
   public static final int RENDERIZAR_EN = 4;
 
-  private int índiceActualImagen = 0;
+  protected int índiceActualImagen = 0;
   private long últimaActualización = System.nanoTime();
   private final String nombre;
 
