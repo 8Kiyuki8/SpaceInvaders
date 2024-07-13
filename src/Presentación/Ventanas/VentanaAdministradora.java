@@ -7,11 +7,11 @@ import java.util.Objects;
 public class VentanaAdministradora {
   public static final int TAMAÑO_ESTÁNDAR_ENTIDAD = 16;
   public static final int ESCALA_ENTIDAD = 3;
-  public static final int TAMAÑO_ENTIDAD = TAMAÑO_ESTÁNDAR_ENTIDAD * ESCALA_ENTIDAD;
+  public static final int TAMAÑO_ENTIDAD = TAMAÑO_ESTÁNDAR_ENTIDAD * ESCALA_ENTIDAD; //48
   private static final int MÁXIMA_CANTIDAD_COLUMNAS = 16;
   private static final int MÁXIMA_CANTIDAD_FILAS = 12;
-  private static final int ANCHO_VENTANA = MÁXIMA_CANTIDAD_COLUMNAS * TAMAÑO_ENTIDAD;
-  private static final int ALTO_VENTANA = MÁXIMA_CANTIDAD_FILAS * TAMAÑO_ENTIDAD;
+  private static final int ANCHO_VENTANA = MÁXIMA_CANTIDAD_COLUMNAS * TAMAÑO_ENTIDAD; //768
+  private static final int ALTO_VENTANA = MÁXIMA_CANTIDAD_FILAS * TAMAÑO_ENTIDAD; //576
 
   public static JFrame crearVentana(JPanel panel) {
     JFrame ventana = new JFrame();

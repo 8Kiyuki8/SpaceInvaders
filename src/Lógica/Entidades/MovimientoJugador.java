@@ -2,6 +2,7 @@ package Lógica.Entidades;
 
 import Lógica.Enumeraciones.Dirección;
 import Lógica.Servicios.AdministradorEventoTeclas;
+import Lógica.Servicios.VerificadorColisiones;
 import Presentación.Ventanas.VentanaAdministradora;
 
 public class MovimientoJugador extends Movimiento {
@@ -22,20 +23,12 @@ public class MovimientoJugador extends Movimiento {
       return;
     }
 
-    int nuevaPosiciónX;
     if (dirección == Dirección.DERECHA) {
       moverDerecha();
     } else if (dirección == Dirección.IZQUIERDA) {
       moverIzquierda();
     }
-    nuevaPosiciónX = obtenerPosiciónX();
 
-    if (nuevaPosiciónX < 0) {
-      nuevaPosiciónX = 0;
-    } else if (nuevaPosiciónX + anchoNave > VentanaAdministradora.obtenerAnchoVentana()) {
-      nuevaPosiciónX = VentanaAdministradora.obtenerAnchoVentana() - anchoNave;
-    }
-
-    establecerPosiciónX(nuevaPosiciónX);
+    VerificadorColisiones.verificarColisionesJugador(anchoNave, this);
   }
 }
