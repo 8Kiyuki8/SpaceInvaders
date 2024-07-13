@@ -6,7 +6,7 @@ import java.util.Objects;
 
 public class VentanaAdministradora {
   public static final int TAMAÑO_ESTÁNDAR_ENTIDAD = 16;
-  public static final int ESCALA_ENTIDAD = 4;
+  public static final int ESCALA_ENTIDAD = 3;
   public static final int TAMAÑO_ENTIDAD = TAMAÑO_ESTÁNDAR_ENTIDAD * ESCALA_ENTIDAD; //48
   private static final int MÁXIMA_CANTIDAD_COLUMNAS = 16;
   private static final int MÁXIMA_CANTIDAD_FILAS = 12;
