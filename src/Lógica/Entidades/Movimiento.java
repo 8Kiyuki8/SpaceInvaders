@@ -2,14 +2,14 @@ package Lógica.Entidades;
 
 public abstract class Movimiento {
   private int posiciónX, posiciónY;
-  private final int velocidad = 4;
+  private final int velocidad = 5;
 
   public void establecerPosiciónX(int posiciónXPorDefecto) {
-    posiciónX = posiciónXPorDefecto;
+    this.posiciónX = posiciónXPorDefecto;
   }
 
   public void establecerPosiciónY(int posiciónYPorDefecto) {
-    posiciónY = posiciónYPorDefecto;
+    this.posiciónY = posiciónYPorDefecto;
   }
 
   public void moverDerecha() {
