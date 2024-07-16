@@ -54,9 +54,8 @@ public class PintorEnemigo extends PintorEntidad {
         if (númeroEntidad != 0 && índice == númeroEntidad) {
           int posiciónEntidadX = columna * VentanaAdministradora.obtenerTamañoEntidad();
           int posiciónEntidadY = fila * VentanaAdministradora.obtenerTamañoEntidad();
-
           graphics2D.drawImage(obtenerImágenesNaveEntidad().get(obtenerÍndiceActualImagen()),
-            posiciónEntidadX,
+            posiciónEntidadX + posiciónX,
             posiciónEntidadY, null);
         }
       }
