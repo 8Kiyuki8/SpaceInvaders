@@ -1,6 +1,7 @@
 package Presentación.Ventanas;
 
 import Lógica.Entidades.NaveJugador;
+import Lógica.Entidades.NaveEnemiga;
 import Presentación.Pintores.PintorJugador;
 import Presentación.Pintores.PintorEnemigo;
 import Lógica.Servicios.AdministradorEventoTeclas;
@@ -17,9 +18,10 @@ public class VentanaJuego extends JPanel implements Runnable {
 
   private final PintorJugador pintorJugador = new PintorJugador("Jugador");
   private final ArrayList<PintorEnemigo> pintorEnemigos;
-
+  //private final ArrayList<NaveEnemiga> naveEnemigas;
   private final AdministradorEventoTeclas administradorTeclas = new AdministradorEventoTeclas();
   private final NaveJugador naveJugador = new NaveJugador(administradorTeclas);
+  private final NaveEnemiga naveEnemiga = new NaveEnemiga();
 
   private Thread hiloJuego;
   private BufferedImage fondoJuego;
@@ -29,7 +31,6 @@ public class VentanaJuego extends JPanel implements Runnable {
     pintorEnemigos.add(new PintorEnemigo("Azul"));
     pintorEnemigos.add(new PintorEnemigo("IndexOutOfBounds"));
     pintorEnemigos.add(new PintorEnemigo("NullPointerException"));
-
     configurarVentana();
     cargarImagenDeFondo();
     setFocusable(true);
@@ -38,14 +39,12 @@ public class VentanaJuego extends JPanel implements Runnable {
   }
 
   private void configurarVentana() {
-    setPreferredSize(new Dimension(
-      VentanaAdministradora.obtenerAnchoVentana(), VentanaAdministradora.obtenerAltoVentana()));
+    setPreferredSize(new Dimension(VentanaAdministradora.obtenerAnchoVentana(), VentanaAdministradora.obtenerAltoVentana()));
   }
 
   private void cargarImagenDeFondo() {
     try {
-      fondoJuego = ImageIO.read(Objects.requireNonNull(
-        getClass().getResource("/Presentación/Recursos/FondoDeJuego/fondodejuego.png")));
+      fondoJuego = ImageIO.read(Objects.requireNonNull(getClass().getResource("/Presentación/Recursos/FondoDeJuego/fondodejuego.png")));
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -59,6 +58,7 @@ public class VentanaJuego extends JPanel implements Runnable {
   public void update() {
     naveJugador.obtenerMovimiento().actualizarMovimiento();
     pintorJugador.actualizarImagenEntidad();
+    naveEnemiga.obtenerMovimiento().actualizarMovimiento();
     for (PintorEnemigo pintorEnemigo : pintorEnemigos) {
       pintorEnemigo.actualizarImagenEntidad();
     }
@@ -68,11 +68,14 @@ public class VentanaJuego extends JPanel implements Runnable {
     super.paintComponent(graphics);
     graphics.drawImage(fondoJuego, 0, 0, getWidth(), getHeight(), this);
     Graphics2D graphics2D = (Graphics2D) graphics;
-    for (int i = 0; i < pintorEnemigos.size(); i += 1) {
-      pintorEnemigos.get(i).dibujar(graphics2D, i + 1, 0, 0);
+
+    for (int i = 0; i < pintorEnemigos.size(); i++) {
+      pintorEnemigos.get(i).dibujar(graphics2D, i + 1,
+        naveEnemiga.obtenerMovimiento().obtenerPosiciónX(), naveEnemiga.obtenerMovimiento().obtenerPosiciónY());
     }
-    pintorJugador.dibujar(graphics2D, null, naveJugador.obtenerMovimiento().obtenerPosiciónX(),
-      naveJugador.obtenerMovimiento().obtenerPosiciónY());
+
+    pintorJugador.dibujar(graphics2D, null,
+      naveJugador.obtenerMovimiento().obtenerPosiciónX(), naveJugador.obtenerMovimiento().obtenerPosiciónY());
     graphics2D.dispose();
   }
 
