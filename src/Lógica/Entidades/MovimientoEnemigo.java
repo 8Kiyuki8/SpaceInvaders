@@ -9,7 +9,7 @@ public class MovimientoEnemigo extends Movimiento {
 
   private final int altoEnemigo = VentanaAdministradora.obtenerTamañoEntidad();
   private final int anchoEnemigo = VentanaAdministradora.obtenerTamañoEntidad();
-  private static final int VELOCIDAD_ENEMIGO_POR_DEFECTO = 1;
+  private static final int VELOCIDAD_ENEMIGO_POR_DEFECTO = 2;
   private Dirección dirección;
 
   public MovimientoEnemigo() {
@@ -31,7 +31,7 @@ public class MovimientoEnemigo extends Movimiento {
   }
 
   public void moverAbajo() {
-    posiciónY += altoEnemigo;
+    posiciónY += velocidadEntidad;
   }
 
   @Override
@@ -44,10 +44,14 @@ public class MovimientoEnemigo extends Movimiento {
 
     if (obtenerPosiciónX() < 0) {
       moverAbajo();
-      dirección = Dirección.DERECHA;
+      if ((posiciónY % altoEnemigo == 0)) {
+        dirección = Dirección.DERECHA;
+      }
     } else if (obtenerPosiciónX() > VentanaAdministradora.obtenerAnchoVentana() - anchoEnemigo - 336) {
       moverAbajo();
-      dirección = Dirección.IZQUIERDA;
+      if ((posiciónY % altoEnemigo == 0)) {
+        dirección = Dirección.IZQUIERDA;
+      }
     }
     VerificadorColisiones.verificarColisionesEnemigo(anchoEnemigo, this);
   }
