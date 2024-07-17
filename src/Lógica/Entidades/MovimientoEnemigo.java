@@ -1,6 +1,7 @@
 package Lógica.Entidades;
 
 import Lógica.Enumeraciones.Dirección;
+import Lógica.Servicios.VerificadorColisiones;
 import Presentación.Ventanas.VentanaAdministradora;
 
 public class MovimientoEnemigo extends Movimiento {
@@ -30,7 +31,7 @@ public class MovimientoEnemigo extends Movimiento {
   }
 
   public void moverAbajo() {
-    posiciónY++;
+    posiciónY += altoEnemigo;
   }
 
   @Override
@@ -42,12 +43,13 @@ public class MovimientoEnemigo extends Movimiento {
     }
 
     if (obtenerPosiciónX() < 0) {
-      establecerPosiciónX(0);
+      moverAbajo();
       dirección = Dirección.DERECHA;
     } else if (obtenerPosiciónX() > VentanaAdministradora.obtenerAnchoVentana() - anchoEnemigo - 336) {
-      establecerPosiciónX(VentanaAdministradora.obtenerAnchoVentana() - anchoEnemigo - 336);
+      moverAbajo();
       dirección = Dirección.IZQUIERDA;
     }
+    VerificadorColisiones.verificarColisionesEnemigo(anchoEnemigo, this);
   }
 
 }

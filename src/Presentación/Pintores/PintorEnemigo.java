@@ -56,7 +56,7 @@ public class PintorEnemigo extends PintorEntidad {
           int posiciónEntidadY = fila * VentanaAdministradora.obtenerTamañoEntidad();
           graphics2D.drawImage(obtenerImágenesNaveEntidad().get(obtenerÍndiceActualImagen()),
             posiciónEntidadX + posiciónX,
-            posiciónEntidadY, null);
+            posiciónEntidadY + posiciónY, null);
         }
       }
     }
