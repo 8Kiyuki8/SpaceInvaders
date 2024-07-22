@@ -1,28 +1,16 @@
 package Lógica.Entidades;
 
+import Lógica.Enumeraciones.Dirección;
+
 public abstract class Movimiento {
-  protected int posiciónX, posiciónY;
-  protected int velocidadEntidad;
 
-  public void establecerPosiciónX(int posiciónXPorDefecto) {
-    this.posiciónX = posiciónXPorDefecto;
+  public void moverDerecha(Posición posición, int desplazamientoEntidad) {
+    posición.establecerPosiciónX(posición.obtenerPosiciónX() + desplazamientoEntidad);
   }
 
-  public void establecerPosiciónY(int posiciónYPorDefecto) {
-    this.posiciónY = posiciónYPorDefecto;
+  public void moverIzquierda(Posición posición, int desplazamientoEntidad) {
+    posición.establecerPosiciónX(posición.obtenerPosiciónX() - desplazamientoEntidad);
   }
 
-  public abstract void moverDerecha();
-
-  public abstract void moverIzquierda();
-
-  public int obtenerPosiciónX() {
-    return posiciónX;
-  }
-
-  public int obtenerPosiciónY() {
-    return posiciónY;
-  }
-
-  public abstract void actualizarMovimiento();
+  public abstract void actualizarMovimiento(Posición posición, Dirección dirección);
 }

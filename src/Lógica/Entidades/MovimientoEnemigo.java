@@ -5,55 +5,25 @@ import Lógica.Servicios.VerificadorColisiones;
 import Presentación.Ventanas.VentanaAdministradora;
 
 public class MovimientoEnemigo extends Movimiento {
+  private boolean flagMoverDerecha = true;
+  private static final int VELOCIDAD_ENEMIGO_POR_DEFECTO = 4;
 
-
-  private final int altoEnemigo = VentanaAdministradora.obtenerTamañoEntidad();
-  private final int anchoEnemigo = VentanaAdministradora.obtenerTamañoEntidad();
-  private static final int VELOCIDAD_ENEMIGO_POR_DEFECTO = 2;
-  private Dirección dirección;
-
-  public MovimientoEnemigo() {
-
-    establecerPosiciónX(0);
-    establecerPosiciónY(0);
-    dirección = Dirección.DERECHA;
-    velocidadEntidad = VELOCIDAD_ENEMIGO_POR_DEFECTO;
+  
+  public void moverAbajo(Posición posición, int desplazamientoEntidad) {
+    posición.establecerPosiciónY(posición.obtenerPosiciónY() + desplazamientoEntidad);
   }
 
   @Override
-  public void moverDerecha() {
-    posiciónX += velocidadEntidad;
-  }
+  public void actualizarMovimiento(Posición posición, Dirección dirección) {
 
-  @Override
-  public void moverIzquierda() {
-    posiciónX -= velocidadEntidad;
-  }
-
-  public void moverAbajo() {
-    posiciónY += velocidadEntidad;
-  }
-
-  @Override
-  public void actualizarMovimiento() {
-    if (dirección == Dirección.DERECHA) {
-      moverDerecha();
-    } else if (dirección == Dirección.IZQUIERDA) {
-      moverIzquierda();
-    }
-
-    if (obtenerPosiciónX() < 0) {
-      moverAbajo();
-      if ((posiciónY % altoEnemigo == 0)) {
-        dirección = Dirección.DERECHA;
-      }
-    } else if (obtenerPosiciónX() > VentanaAdministradora.obtenerAnchoVentana() - anchoEnemigo - 336) {
-      moverAbajo();
-      if ((posiciónY % altoEnemigo == 0)) {
-        dirección = Dirección.IZQUIERDA;
+    if ((VerificadorColisiones.verificarColisionesConLosBordes(VentanaAdministradora.obtenerTamañoEntidad(), posición)) && flagMoverDerecha) {
+      moverDerecha(posición, VELOCIDAD_ENEMIGO_POR_DEFECTO);
+    } else {
+      moverIzquierda(posición, VELOCIDAD_ENEMIGO_POR_DEFECTO);
+      flagMoverDerecha = false;
+      if (!(VerificadorColisiones.verificarColisionesConLosBordes(VentanaAdministradora.obtenerTamañoEntidad(), posición)) && !flagMoverDerecha) {
+        flagMoverDerecha = true;
       }
     }
-    VerificadorColisiones.verificarColisionesEnemigo(anchoEnemigo, this);
   }
-
 }
