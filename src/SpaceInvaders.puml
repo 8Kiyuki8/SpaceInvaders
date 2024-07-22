@@ -1,120 +1,209 @@
 @startuml
-abstract class Recurso {
-    - recurso : String
-    +obtenerRecurso()
+package "Lógica" {
+    class SpaceInvaders {
+        -enemigos[] : NaveEnemiga
+        -jugador : Jugador
+        -ovni : Ovni
+        +iniciarJuego() : void
+        +obtenerPuntuación() : Puntuación
+        +finalizarJuego() : void
+        +calcularPuntaje() : void
+        +mostrarResultadosDePartida(Puntuación, Tiempo) : void
+    }
+    class Tiempo {
+        -milisegundos : long
+        +obtenerMilisegundos() : long
+    }
+    class Puntuación {
+        -puntaje : int
+        +obtenerPuntuación() : int
+    }
+    class NaveEnemiga {
+        -movimiento: MovimientoEnemigo
+        +obtenerMovimiento(): MovimientoEnemigo
+    }
+    class NaveJugador {
+        -movimiento: Movimiento
+        +obtenerMovimiento(): Movimiento
+    }
+    enum Dirección <<enumeration>> {
+        +DERECHA:
+        +IZQUIERDA:
+    }
+    class Ovni
+    class Vida {
+        -vida : int
+        +obtenerVida() : int
+    }
+
+    abstract class PowerUp
+
+    abstract class Misil {
+        -velocidad : int
+    }
+
+    class MisilCongelante{}
+    class MisilPredeterminado
+
+    abstract class Nave {
+            -posición: Posición
+            +obtenerPosición(): Posición
+        }
+
+    abstract class Movimiento {
+        -izquierda : int
+        -derecha : int
+        +moverDerecha() : Movimiento
+        +moverIzquierda() : Movimiento
+        +moverIzquierda(Posición, int): void
+        +actualizarMovimiento(Posición, Dirección): void
+        +moverDerecha(Posición, int): void
+    }
+    class MovimientoJugador {
+        -VELOCIDAD_JUGADOR_POR DEFECTO: int
+        +actualizarMovimiento(Posición, Dirección): void
+    }
+    class MovimientoEnemigo {
+        -VELOCIDAD_ENEMIGO_POR DEFECTO: int
+        -abajo : int
+        +actualizarMovimiento(Posición, Dirección): void
+        +moverAbajo(Posición, int): void
+        +moverAbajo() : Movimiento
+    }
+
+    class VidaPowerUp {
+        +aumentarVida() : void
+    }
+
+    class MisilPowerUp {
+        +duplicarMisil() : void
+    }
+
+    class VelocidadPowerUp {
+        +aumentarVelocidad() : void
+    }
+
+    class Posición {
+            -posiciónX: int
+            -posiciónY: int
+            +establecerPosiciónX(int): void
+            +establecerPosiciónY(int): void
+            +obtenerPosiciónX(): int
+            +obtenerPosiciónY(): int
+        }
+
+    SpaceInvaders --> Nave
+    SpaceInvaders -left-> Tiempo
+    SpaceInvaders -right-> Puntuación
+
+    NaveJugador -|>  Nave
+    Nave <|-- NaveEnemiga
+    Ovni -l-|> Nave
+    NaveJugador --l-> PowerUp
+    Ovni --> "1" Vida
+
+    NaveEnemiga --> "1" Vida
+    NaveJugador --> "1..3   " Vida
+
+    VidaPowerUp -u-|> PowerUp
+    MisilPowerUp -u-|> PowerUp
+    PowerUp <|-l- VelocidadPowerUp
+
+    Movimiento <|-- MovimientoJugador
+    Movimiento <|-- MovimientoEnemigo
+
+    Nave --> Movimiento
+    Nave --r> Misil
+    Nave --> Posición
+
+    MisilCongelante -l-|> Misil
+    MisilPredeterminado -l-|> Misil
+    Movimiento --> Dirección
 }
 
-class Interfaz {
-    +desplegarRecurso(Recurso)
+package "Presentación" {
+    class AdministradorArchivos {
+        +obtenerURLRecurso(String, int): String
+    }
+    class AdministradorEventoTeclas {
+        -teclaDirección: HashMap<Integer, Dirección>
+        -direcciónMovimiento: Dirección
+        +keyPressed(KeyEvent): void
+        +obtenerDirecciónMovimiento(): Dirección
+        +keyTyped(KeyEvent): void
+        +keyReleased(KeyEvent): void
+    }
+
+    abstract class Pintor {
+        #índiceActualImagen: int
+        -nombre: String
+        +RENDERIZAR_EN: int
+        -últimaActualización: long
+        +obtenerÍndiceActualImagen(): int
+        +obtenerNombre(): String
+        +actualizarImagenEntidad(): void
+    }
+    class PintorEnemigo {
+        -mapaNúmerosEntidad: int[][]
+        -RENDERIZADO_ENEMIGO: int
+        -últimaActualización: long
+        +actualizarImagenEntidad(): void
+        +dibujar(Graphics2D, Integer, int, int): void
+        +cargarMapaEnemigo(String): void
+    }
+    class PintorEntidad {
+        +NÚMERO_MÁXIMO_SPRITES_ENTIDAD: int
+        -imágenesNaveEntidad: ArrayList<BufferedImage>
+        -configurarSpritesJugador(): void
+        +dibujar(Graphics2D, Integer, int, int): void
+        +obtenerImágenesNaveEntidad(): ArrayList<BufferedImage>
+    }
+    class PintorJugador {
+        +dibujar(Graphics2D, Integer, int, int): void
+    }
+    class VentanaAdministradora {
+        -MÁXIMA_CANTIDAD_FILAS: int
+        +ESCALA_ENTIDAD: int
+        -ALTO_VENTANA: int
+        -MÁXIMA_CANTIDAD_COLUMNAS: int
+        +TAMAÑO_ENTIDAD: int
+        +TAMAÑO_ESTÁNDAR_ENTIDAD: int
+        -ANCHO_VENTANA: int
+        +obtenerAnchoVentana(): int
+        +obtenerAltoVentana(): int
+        +obtenerTamañoEntidad(): int
+        +crearVentana(JPanel): JFrame
+    }
+    class VentanaJuego {
+        +FPS_JUEGO: int
+        -administradorTeclas: AdministradorEventoTeclas
+        -naveJugador: NaveJugador
+        -pintorEnemigos: ArrayList<PintorEnemigo>
+        -hiloJuego: Thread
+        -fondoJuego: BufferedImage
+        -naveEnemiga: NaveEnemiga
+        -pintorJugador: PintorJugador
+        -configurarVentana(): void
+        #paintComponent(Graphics): void
+        +run(): void
+        -cargarImagenDeFondo(): void
+        +update(): void
+        +iniciarHiloJuego(): void
+    }
+    class VentanaPrincipal {
+        -instancia: VentanaPrincipal
+        -ventana: JFrame
+        -crearBotónIniciarJuego(): JPanel
+        -abrirVentanaJuego(): void
+        +obtenerVentana(): VentanaPrincipal
+        -configurarVentana(): void
+    }
+    PintorEntidad -u-|> Pintor
+    PintorEnemigo -u-|> Pintor
+    PintorJugador -u-|> Pintor
+    VentanaAdministradora -l-> VentanaPrincipal
+    VentanaAdministradora --> VentanaJuego
 }
-class RecursoObstaculo
-class RecursoEnemigo
-class RecursoJugador
-class RecursoOvni
-class RecursoMisil
-
-class SpaceInvaders {
-    -enemigos[] : Enemigo
-    -jugador : Jugador
-    -ovni : Ovni
-    +iniciarJuego() : void
-    +obtenerPuntuación() : Puntuación
-    +finalizarJuego() : void
-    +calcularPuntaje() : void
-    +mostrarResultadosDePartida(Puntuación, Tiempo) : void
-}
-class Tiempo {
-    -milisegundos : long
-    +obtenerMilisegundos() : long
-}
-class Puntuación {
-    -puntaje : int
-    +obtenerPuntuación() : int
-}
-
-abstract class Nave {
-    -velocidad : int
-
-}
-class Enemigo {
-    +disparar() : Misil
-}
-class Jugador{
-    -puntaje : Puntuación
-    +disparar() : Misil
-    +incrementarPuntaje() : void
-    +obtenerPuntaje() : Puntuación
-}
-class Ovni
-abstract class Vida {
-    -vida : int
-    +obtenerVida() : int
-}
-
-abstract class PowerUp
-
-class Misil {
-    -numeroMisiles : int
-    +obtenerNumeroMisiles() : int
-}
-
-abstract class Movimiento {
-    -izquierda : int
-    -derecha : int
-    +moverDerecha() : Movimiento
-    +moverIzquierda() : Movimiento
-}
-class MovimientoJugador
-class MovimientoEnemigo {
-    -abajo : int
-    +moverAbajo() : Movimiento
-}
-
-class VidaPowerUp {
-    +aumentarVida() : void
-}
-
-class MisilPowerUp {
-    +duplicarMisil() : void
-}
-
-class VelocidadPowerUp {
-    +aumentarVelocidad() : void
-}
-
-SpaceInvaders --> Nave
-SpaceInvaders -left-> Tiempo
-SpaceInvaders -right-> Puntuación
-
-Jugador -|>  Nave
-Nave <|-- Enemigo
-Ovni -l-|> Nave
-Jugador --l-> PowerUp
-Ovni --> "1" Vida
-
-Enemigo --> "1" Vida
-Jugador --> "1..3   " Vida
-
-VidaPowerUp -u-|> PowerUp
-MisilPowerUp -u-|> PowerUp
-PowerUp <|-l- VelocidadPowerUp
-
-Movimiento <|-- MovimientoJugador
-Movimiento <|-- MovimientoEnemigo
-
-Nave --> Movimiento
-Nave --r> Misil
-
-RecursoEnemigo -u-|> Recurso
-RecursoOvni -u-|> Recurso
-RecursoJugador -u-|> Recurso
-RecursoObstaculo -u-|> Recurso
-RecursoMisil -u-|> Recurso
-
-Interfaz -u-> RecursoMisil
-Interfaz -u-> RecursoJugador
-Interfaz -u-> RecursoOvni
-Interfaz -u-> RecursoEnemigo
-Interfaz -u-> RecursoObstaculo
-SpaceInvaders -u-> Interfaz
+SpaceInvaders --> "Presentación"
+MovimientoJugador -d-> "AdministradorEventoTeclas"
 @enduml
