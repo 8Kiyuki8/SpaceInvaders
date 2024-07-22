@@ -1,12 +1,11 @@
 package Lógica.Entidades;
 
-import Lógica.Servicios.AdministradorEventoTeclas;
-
 public class NaveJugador extends Nave {
   private final Movimiento movimiento;
 
-  public NaveJugador(AdministradorEventoTeclas administradorTeclas) {
-    movimiento = new MovimientoJugador(administradorTeclas);
+  public NaveJugador(Posición posición) {
+    super(posición);
+    movimiento = new MovimientoJugador();
   }
 
   public Movimiento obtenerMovimiento() {

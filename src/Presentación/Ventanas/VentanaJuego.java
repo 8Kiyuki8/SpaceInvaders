@@ -2,6 +2,7 @@ package Presentación.Ventanas;
 
 import Lógica.Entidades.NaveJugador;
 import Lógica.Entidades.NaveEnemiga;
+import Lógica.Entidades.Posición;
 import Presentación.Pintores.PintorJugador;
 import Presentación.Pintores.PintorEnemigo;
 import Lógica.Servicios.AdministradorEventoTeclas;
@@ -18,10 +19,9 @@ public class VentanaJuego extends JPanel implements Runnable {
 
   private final PintorJugador pintorJugador = new PintorJugador("Jugador");
   private final ArrayList<PintorEnemigo> pintorEnemigos;
-  //private final ArrayList<NaveEnemiga> naveEnemigas;
   private final AdministradorEventoTeclas administradorTeclas = new AdministradorEventoTeclas();
-  private final NaveJugador naveJugador = new NaveJugador(administradorTeclas);
-  private final NaveEnemiga naveEnemiga = new NaveEnemiga();
+  private NaveJugador naveJugador;
+  private final NaveEnemiga naveEnemiga;
 
   private Thread hiloJuego;
   private BufferedImage fondoJuego;
@@ -31,6 +31,17 @@ public class VentanaJuego extends JPanel implements Runnable {
     pintorEnemigos.add(new PintorEnemigo("Azul"));
     pintorEnemigos.add(new PintorEnemigo("IndexOutOfBounds"));
     pintorEnemigos.add(new PintorEnemigo("NullPointerException"));
+    naveJugador = new NaveJugador(
+      new Posición(
+        (VentanaAdministradora.obtenerAnchoVentana() / 2) - (VentanaAdministradora.obtenerTamañoEntidad() / 2),
+        VentanaAdministradora.obtenerAltoVentana() - (VentanaAdministradora.obtenerTamañoEntidad() * 2))
+    );
+
+    naveEnemiga = new NaveEnemiga(new Posición(
+      0,
+      0)
+    );
+
     configurarVentana();
     cargarImagenDeFondo();
     setFocusable(true);
@@ -56,9 +67,9 @@ public class VentanaJuego extends JPanel implements Runnable {
   }
 
   public void update() {
-    naveJugador.obtenerMovimiento().actualizarMovimiento();
+    naveJugador.obtenerMovimiento().actualizarMovimiento(naveJugador.obtenerPosición(), administradorTeclas.obtenerDirecciónMovimiento());
     pintorJugador.actualizarImagenEntidad();
-    naveEnemiga.obtenerMovimiento().actualizarMovimiento();
+    naveEnemiga.obtenerMovimiento().actualizarMovimiento(naveEnemiga.obtenerPosición(), null);
     for (PintorEnemigo pintorEnemigo : pintorEnemigos) {
       pintorEnemigo.actualizarImagenEntidad();
     }
@@ -71,11 +82,11 @@ public class VentanaJuego extends JPanel implements Runnable {
 
     for (int i = 0; i < pintorEnemigos.size(); i++) {
       pintorEnemigos.get(i).dibujar(graphics2D, i + 1,
-        naveEnemiga.obtenerMovimiento().obtenerPosiciónX(), naveEnemiga.obtenerMovimiento().obtenerPosiciónY());
+        naveEnemiga.obtenerPosición().obtenerPosiciónX(), naveEnemiga.obtenerPosición().obtenerPosiciónY());
     }
 
     pintorJugador.dibujar(graphics2D, null,
-      naveJugador.obtenerMovimiento().obtenerPosiciónX(), naveJugador.obtenerMovimiento().obtenerPosiciónY());
+      naveJugador.obtenerPosición().obtenerPosiciónX(), naveJugador.obtenerPosición().obtenerPosiciónY());
     graphics2D.dispose();
   }
 
