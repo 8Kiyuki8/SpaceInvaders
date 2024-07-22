@@ -8,7 +8,7 @@ public class MovimientoEnemigo extends Movimiento {
   private boolean flagMoverDerecha = true;
   private static final int VELOCIDAD_ENEMIGO_POR_DEFECTO = 4;
 
-
+  
   public void moverAbajo(Posición posición, int desplazamientoEntidad) {
     posición.establecerPosiciónY(posición.obtenerPosiciónY() + desplazamientoEntidad);
   }
