@@ -2,21 +2,25 @@ package Presentación.Pintores;
 
 import Presentación.Servicios.AdministradorArchivos;
 
-import java.awt.*;
 import java.util.*;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-public abstract class PintorEntidad extends Pintor {
+public abstract class PintorEntidad {
   public static final int NÚMERO_MÁXIMO_SPRITES_ENTIDAD = 4;
+  protected int índiceActualImagen = 0;
+  private long últimaActualización = System.nanoTime();
+  private final String nombre;
 
   private final ArrayList<BufferedImage> imágenesNaveEntidad = new ArrayList<>();
 
   public PintorEntidad(String nombre) {
-    super(nombre);
+    this.nombre = nombre;
     configurarSpritesJugador();
   }
+
+  public abstract void actualizarImagenEntidad();
 
   private void configurarSpritesJugador() {
     AdministradorArchivos administradorArchivos = new AdministradorArchivos();
@@ -37,5 +41,24 @@ public abstract class PintorEntidad extends Pintor {
     return imágenesNaveEntidad;
   }
 
-  public abstract void dibujar(Graphics2D graphics2D, Integer enemyIndex, int xPos, int yPos);
+  public int obtenerÍndiceActualImagen() {
+    return índiceActualImagen;
+  }
+
+  public String obtenerNombre() {
+    return nombre;
+  }
+
+  public long obtenerÚltimaActualización() {
+    return últimaActualización;
+  }
+
+  public void cambiarÚltimaActualización(long últimaActualización) {
+    this.últimaActualización = últimaActualización;
+  }
+
+  public void cambiarÍndiceActualImagen(int índiceActualImagen) {
+    this.índiceActualImagen = índiceActualImagen;
+  }
+
 }
