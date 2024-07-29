@@ -4,6 +4,7 @@ import Lógica.Entidades.Colmena;
 import Lógica.Entidades.NaveJugador;
 import Lógica.Entidades.NaveEnemiga;
 import Lógica.Entidades.Posición;
+import Lógica.Enumeraciones.AcciónUsuario;
 import Presentación.Pintores.PintorColmena;
 import Presentación.Pintores.PintorJugador;
 import Presentación.Pintores.PintorEnemigo;
@@ -73,9 +74,15 @@ public class VentanaJuego extends JPanel implements Runnable {
   }
 
   public void update() {
-    naveJugador.obtenerMovimiento().actualizarMovimiento(naveJugador.obtenerPosición(), administradorTeclas.obtenerDirecciónMovimiento());
+    AcciónUsuario acciónJugador = administradorTeclas.obtenerAcción();
+    if (acciónJugador == AcciónUsuario.IZQUIERDA) {
+      naveJugador.moverIzquierda();
+    } else if (acciónJugador == AcciónUsuario.DERECHA) {
+      naveJugador.moverDerecha();
+    }
+    administradorTeclas.limpiarAcción();
     pintorJugador.actualizarImagenEntidad();
-
+    
   }
 
   protected void paintComponent(Graphics graphics) {
