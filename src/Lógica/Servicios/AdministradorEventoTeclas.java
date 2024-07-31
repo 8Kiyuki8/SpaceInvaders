@@ -17,7 +17,7 @@ public class AdministradorEventoTeclas implements KeyListener {
     ventanaJuegoEventoTeclas.put(KeyEvent.VK_LEFT, AcciónUsuario.IZQUIERDA);
     ventanaJuegoEventoTeclas.put(KeyEvent.VK_D, AcciónUsuario.DERECHA);
     ventanaJuegoEventoTeclas.put(KeyEvent.VK_RIGHT, AcciónUsuario.DERECHA);
-    //ventanaJuegoEventoTeclas.put(KeyEvent.VK_SPACE, AcciónUsuario.SHOOT);
+    ventanaJuegoEventoTeclas.put(KeyEvent.VK_SPACE, AcciónUsuario.DISPARAR);
     //ventanaJuegoEventoTeclas.put(KeyEvent.VK_UP, AcciónUsuario.UP);
     //ventanaJuegoEventoTeclas.put(KeyEvent.VK_DOWN, AcciónUsuario.ABAJO);
     //ventanaJuegoEventoTeclas.put(KeyEvent.VK_ENTER, AcciónUsuario.CONFIRM);

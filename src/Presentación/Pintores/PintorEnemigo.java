@@ -3,6 +3,7 @@ package Presentación.Pintores;
 import java.awt.*;
 
 public class PintorEnemigo extends PintorEntidad {
+  public static final int NÚMERO_MÁXIMO_SPRITES_ENTIDAD = 4;
   private static final int RENDERIZADO_ENEMIGO = 48;
   //private long últimaActualización = System.nanoTime();
 
@@ -22,5 +23,10 @@ public class PintorEnemigo extends PintorEntidad {
       cambiarÍndiceActualImagen((obtenerÍndiceActualImagen() + 1) % NÚMERO_MÁXIMO_SPRITES_ENTIDAD);
       cambiarÚltimaActualización(tiempoActual);
     }
+  }
+
+  @Override
+  public int obtenerNúmeroMáximoDeSprite() {
+    return NÚMERO_MÁXIMO_SPRITES_ENTIDAD;
   }
 }
