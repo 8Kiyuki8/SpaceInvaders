@@ -5,7 +5,6 @@ import Presentación.Ventanas.VentanaAdministradora;
 
 public class VerificadorColisiones {
   public static boolean verificarColisionesConLosBordes(Posición posiciónEntidad) {
-
     if (posiciónEntidad.obtenerPosiciónX() < 0) {
       posiciónEntidad.establecerPosiciónX(0);
       return false;

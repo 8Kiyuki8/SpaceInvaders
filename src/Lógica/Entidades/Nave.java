@@ -9,27 +9,30 @@ public abstract class Nave {
   private final MovimientoIzquierda movimientoIzquierda;
   private final MovimientoDerecha movimientoDerecha;
   private final MovimientoAbajo movimientoAbajo;
+  private final int VELOCIDAD_NAVE;
 
-  public Nave(Posición nuevaPosición) {
+  public Nave(Posición nuevaPosición, int VELOCIDAD_NAVE) {
     posición = nuevaPosición;
     movimientoIzquierda = new MovimientoIzquierda();
     movimientoDerecha = new MovimientoDerecha();
     movimientoAbajo = new MovimientoAbajo();
+    this.VELOCIDAD_NAVE = VELOCIDAD_NAVE;
   }
+
 
   public Posición obtenerPosición() {
     return posición;
   }
 
   public void moverDerecha() {
-    movimientoDerecha.mover(posición);
+    movimientoDerecha.mover(posición, VELOCIDAD_NAVE);
   }
 
   public void moverIzquierda() {
-    movimientoIzquierda.mover(posición);
+    movimientoIzquierda.mover(posición, VELOCIDAD_NAVE);
   }
 
   public void moverAbajo() {
-    movimientoAbajo.mover(posición);
+    movimientoAbajo.mover(posición, VELOCIDAD_NAVE);
   }
 }

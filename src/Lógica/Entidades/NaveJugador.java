@@ -1,10 +1,10 @@
 package Lógica.Entidades;
 
 public class NaveJugador extends Nave {
-  public static final int VELOCIDAD_MISIL = 10;
+  private static final int VELOCIDAD_NAVE = 10;
 
   public NaveJugador(Posición posición) {
-    super(posición);
+    super(posición, VELOCIDAD_NAVE);
   }
 
   public Misil disparar() {
