@@ -1,14 +1,12 @@
 package Presentación.Ventanas;
 
-import Lógica.Entidades.Colmena;
-import Lógica.Entidades.NaveJugador;
-import Lógica.Entidades.NaveEnemiga;
-import Lógica.Entidades.Posición;
+import Lógica.Entidades.*;
 import Lógica.Enumeraciones.AcciónUsuario;
 import Presentación.Pintores.PintorColmena;
 import Presentación.Pintores.PintorJugador;
 import Presentación.Pintores.PintorEnemigo;
 import Lógica.Servicios.AdministradorEventoTeclas;
+import Presentación.Pintores.PintorMisil;
 
 import java.awt.*;
 import javax.swing.*;
@@ -23,10 +21,13 @@ public class VentanaJuego extends JPanel implements Runnable {
   //Pintores
   private final PintorJugador pintorJugador = new PintorJugador("Jugador");
   private final PintorColmena pintorColmena = new PintorColmena();
+  private final PintorMisil pintorMisil = new PintorMisil("Misil");
   private final AdministradorEventoTeclas administradorTeclas = new AdministradorEventoTeclas();
+
   //Entidades
   private NaveJugador naveJugador;
   private NaveEnemiga[][] navesEnemigas;
+  private ArrayList<Misil> misilesJugador = new ArrayList<>();
   private Colmena colmena;
 
   private Thread hiloJuego;
@@ -57,12 +58,14 @@ public class VentanaJuego extends JPanel implements Runnable {
   }
 
   private void configurarVentana() {
-    setPreferredSize(new Dimension(VentanaAdministradora.obtenerAnchoVentana(), VentanaAdministradora.obtenerAltoVentana()));
+    setPreferredSize(new Dimension(
+      VentanaAdministradora.obtenerAnchoVentana(), VentanaAdministradora.obtenerAltoVentana()));
   }
 
   private void cargarImagenDeFondo() {
     try {
-      fondoJuego = ImageIO.read(Objects.requireNonNull(getClass().getResource("/Presentación/Recursos/FondoDeJuego/fondodejuego.png")));
+      fondoJuego = ImageIO.read(
+        Objects.requireNonNull(getClass().getResource("/Presentación/Recursos/FondoDeJuego/fondodejuego.png")));
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -79,10 +82,16 @@ public class VentanaJuego extends JPanel implements Runnable {
       naveJugador.moverIzquierda();
     } else if (acciónJugador == AcciónUsuario.DERECHA) {
       naveJugador.moverDerecha();
+    } else if (acciónJugador == AcciónUsuario.DISPARAR) {
+      misilesJugador.add(naveJugador.disparar());
     }
+    misilesJugador.forEach(Misil::dispararArriba);
+
+    misilesJugador.removeIf(misil -> misil.obtenerPosiciónMisil().obtenerPosiciónY() < 0);
+
     administradorTeclas.limpiarAcción();
     pintorJugador.actualizarImagenEntidad();
-    
+
   }
 
   protected void paintComponent(Graphics graphics) {
@@ -93,7 +102,10 @@ public class VentanaJuego extends JPanel implements Runnable {
     pintorColmena.dibujar(graphics2D, colmena.obtenerPosición(), navesEnemigas);
     pintorJugador.dibujar(graphics2D, null,
       naveJugador.obtenerPosición().obtenerPosiciónX(), naveJugador.obtenerPosición().obtenerPosiciónY());
-    graphics2D.dispose();
+    for (Misil misil : misilesJugador) {
+      pintorMisil.dibujar(graphics2D, null, misil.obtenerPosiciónMisil().obtenerPosiciónX(), misil.obtenerPosiciónMisil().obtenerPosiciónY());
+      pintorMisil.actualizarImagenEntidad();
+    }
   }
 
   @Override

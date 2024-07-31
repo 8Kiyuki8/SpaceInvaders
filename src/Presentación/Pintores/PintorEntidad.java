@@ -8,7 +8,6 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 public abstract class PintorEntidad {
-  public static final int NÚMERO_MÁXIMO_SPRITES_ENTIDAD = 4;
   protected int índiceActualImagen = 0;
   private long últimaActualización = System.nanoTime();
   private final String nombre;
@@ -22,9 +21,11 @@ public abstract class PintorEntidad {
 
   public abstract void actualizarImagenEntidad();
 
+  public abstract int obtenerNúmeroMáximoDeSprite();
+
   private void configurarSpritesJugador() {
     AdministradorArchivos administradorArchivos = new AdministradorArchivos();
-    for (int i = 0; i < NÚMERO_MÁXIMO_SPRITES_ENTIDAD; i += 1) {
+    for (int i = 0; i < obtenerNúmeroMáximoDeSprite(); i += 1) {
       String fileName = administradorArchivos.obtenerURLRecurso(obtenerNombre(), i);
       try {
         imágenesNaveEntidad.add(ImageIO.read(
