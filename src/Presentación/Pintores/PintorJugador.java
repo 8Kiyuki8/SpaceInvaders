@@ -23,7 +23,7 @@ public class PintorJugador extends PintorEntidad {
     return NÚMERO_MÁXIMO_SPRITES_ENTIDAD;
   }
 
-  public void dibujar(Graphics2D graphics2D, Integer índice, int posiciónX, int posiciónY) {
+  public void dibujar(Graphics2D graphics2D, int posiciónX, int posiciónY) {
     graphics2D.drawImage(obtenerImágenesNaveEntidad().get(obtenerÍndiceActualImagen()), posiciónX,
       posiciónY,
       null);
