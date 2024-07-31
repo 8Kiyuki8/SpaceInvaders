@@ -2,6 +2,7 @@ package Presentación.Ventanas;
 
 import Lógica.Entidades.*;
 import Lógica.Enumeraciones.AcciónUsuario;
+import Lógica.Servicios.VerificadorColisiones;
 import Presentación.Pintores.PintorColmena;
 import Presentación.Pintores.PintorJugador;
 import Presentación.Pintores.PintorEnemigo;
@@ -92,6 +93,45 @@ public class VentanaJuego extends JPanel implements Runnable {
     administradorTeclas.limpiarAcción();
     pintorJugador.actualizarImagenEntidad();
 
+    actualizarMovimientoColmena(navesEnemigas);
+  }
+
+  public void actualizarMovimientoColmena(NaveEnemiga[][] colmenaEnemigos) {
+    for (int i = 0; i < colmenaEnemigos.length; i++) {
+      for (int j = 0; j < colmenaEnemigos[0].length; j++) {
+        if (colmenaEnemigos[i][j] != null) {
+          if (colmena.obtenerDirección()) {
+            colmenaEnemigos[i][j].moverDerecha();
+          } else {
+            colmenaEnemigos[i][j].moverIzquierda();
+          }
+        }
+      }
+    }
+    boolean bordeAlcanzado = false;
+    for (int i = 0; i < colmenaEnemigos.length; i++) {
+      for (int j = 0; j < colmenaEnemigos[0].length; j++) {
+        if (colmenaEnemigos[i][j] != null) {
+          int posiciónX = colmenaEnemigos[i][j].obtenerPosición().obtenerPosiciónX();
+          if (posiciónX <= 0 || posiciónX >= VentanaAdministradora.obtenerAnchoVentana() - VentanaAdministradora.obtenerTamañoEntidad()) {
+            bordeAlcanzado = true;
+            break;
+          }
+        }
+      }
+      if (bordeAlcanzado) break;
+    }
+
+    if (bordeAlcanzado) {
+      colmena.cambiarDirección();
+      for (int i = 0; i < colmenaEnemigos.length; i++) {
+        for (int j = 0; j < colmenaEnemigos[0].length; j++) {
+          if (colmenaEnemigos[i][j] != null) {
+            colmenaEnemigos[i][j].moverAbajo();
+          }
+        }
+      }
+    }
   }
 
   protected void paintComponent(Graphics graphics) {
@@ -99,8 +139,8 @@ public class VentanaJuego extends JPanel implements Runnable {
     graphics.drawImage(fondoJuego, 0, 0, getWidth(), getHeight(), this);
     Graphics2D graphics2D = (Graphics2D) graphics;
 
-    pintorColmena.dibujar(graphics2D, colmena.obtenerPosición(), navesEnemigas);
-    pintorJugador.dibujar(graphics2D, null,
+    pintorColmena.dibujar(graphics2D, navesEnemigas);
+    pintorJugador.dibujar(graphics2D,
       naveJugador.obtenerPosición().obtenerPosiciónX(), naveJugador.obtenerPosición().obtenerPosiciónY());
     for (Misil misil : misilesJugador) {
       pintorMisil.dibujar(graphics2D, null, misil.obtenerPosiciónMisil().obtenerPosiciónX(), misil.obtenerPosiciónMisil().obtenerPosiciónY());
