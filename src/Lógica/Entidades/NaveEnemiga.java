@@ -7,4 +7,9 @@ public class NaveEnemiga extends Nave {
     super(posición, VELOCIDAD_NAVE);
   }
 
+  public Misil disparar() {
+    return new Misil(
+      new Posición(obtenerPosición().obtenerPosiciónX(), obtenerPosición().obtenerPosiciónY()));
+  }
+
 }

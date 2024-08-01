@@ -19,7 +19,6 @@ public abstract class Nave {
     this.VELOCIDAD_NAVE = VELOCIDAD_NAVE;
   }
 
-
   public Posición obtenerPosición() {
     return posición;
   }
