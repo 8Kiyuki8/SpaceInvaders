@@ -109,6 +109,24 @@ public class VentanaJuego extends JPanel implements Runnable {
     administradorTeclas.limpiarAcción();
     pintorJugador.actualizarImagenEntidad();
     actualizarMovimientoColmena(navesEnemigas);
+    colisionaEnemigoConMisil();
+  }
+
+  public void colisionaEnemigoConMisil() {
+    for (int i = 0; i < navesEnemigas.length; i++) {
+      for (int j = 0; j < navesEnemigas[i].length; j++) {
+        NaveEnemiga naveEnemiga = navesEnemigas[i][j];
+        if (naveEnemiga != null) {
+          for (Misil misil : misilesJugador) {
+            if (naveEnemiga.colisionaConMisil(misil)) {
+              navesEnemigas[i][j] = null;
+              misilesJugador.remove(misil);
+              break;
+            }
+          }
+        }
+      }
+    }
   }
 
   public void actualizarMovimientoColmena(NaveEnemiga[][] colmenaEnemigos) {
