@@ -25,4 +25,5 @@ public class Posición {
   public void establecerPosiciónY(int nuevaPosiciónY) {
     posiciónY = nuevaPosiciónY;
   }
+
 }

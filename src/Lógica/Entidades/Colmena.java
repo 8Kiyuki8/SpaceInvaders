@@ -6,7 +6,6 @@ public class Colmena {
   private boolean moverDerecha = true;
   private Posición posición;
 
-
   public Colmena(Posición posición) {
     this.posición = posición;
   }
@@ -26,7 +25,6 @@ public class Colmena {
     return colmenaEnemigos;
   }
 
-
   public boolean obtenerDirección() {
     return moverDerecha;
   }
@@ -34,4 +32,5 @@ public class Colmena {
   public void cambiarDirección() {
     moverDerecha = !moverDerecha;
   }
+
 }

@@ -2,12 +2,10 @@ package Presentación.Ventanas;
 
 import Lógica.Entidades.*;
 import Lógica.Enumeraciones.AcciónUsuario;
-import Lógica.Servicios.VerificadorColisiones;
 import Presentación.Pintores.PintorColmena;
 import Presentación.Pintores.PintorJugador;
-import Presentación.Pintores.PintorEnemigo;
 import Lógica.Servicios.AdministradorEventoTeclas;
-import Presentación.Pintores.PintorMisil;
+import Presentación.Pintores.PintorMisilJugador;
 
 import java.awt.*;
 import javax.swing.*;
@@ -18,11 +16,12 @@ import java.io.IOException;
 
 public class VentanaJuego extends JPanel implements Runnable {
   public static final int FPS_JUEGO = 60;
+  private static final int TIEMPO_ENTRE_DISPAROS = 450;
 
   //Pintores
   private final PintorJugador pintorJugador = new PintorJugador("Jugador");
   private final PintorColmena pintorColmena = new PintorColmena();
-  private final PintorMisil pintorMisil = new PintorMisil("Misil");
+  private final PintorMisilJugador pintorMisil = new PintorMisilJugador("MisilJugador");
   private final AdministradorEventoTeclas administradorTeclas = new AdministradorEventoTeclas();
 
   //Entidades
@@ -33,6 +32,7 @@ public class VentanaJuego extends JPanel implements Runnable {
 
   private Thread hiloJuego;
   private BufferedImage fondoJuego;
+  private long últimoTiempoDisparoJugador = 0;
 
   public VentanaJuego() {
     naveJugador = new NaveJugador(
@@ -77,22 +77,24 @@ public class VentanaJuego extends JPanel implements Runnable {
     hiloJuego.start();
   }
 
-  public void update() {
+  public void actualizar() {
     AcciónUsuario acciónJugador = administradorTeclas.obtenerAcción();
     if (acciónJugador == AcciónUsuario.IZQUIERDA) {
       naveJugador.moverIzquierda();
     } else if (acciónJugador == AcciónUsuario.DERECHA) {
       naveJugador.moverDerecha();
     } else if (acciónJugador == AcciónUsuario.DISPARAR) {
-      misilesJugador.add(naveJugador.disparar());
+      long tiempoActual = System.currentTimeMillis();
+      if (tiempoActual - últimoTiempoDisparoJugador >= TIEMPO_ENTRE_DISPAROS) {
+        misilesJugador.add(naveJugador.disparar());
+        últimoTiempoDisparoJugador = tiempoActual;
+      }
     }
     misilesJugador.forEach(Misil::dispararArriba);
-
     misilesJugador.removeIf(misil -> misil.obtenerPosiciónMisil().obtenerPosiciónY() < 0);
 
     administradorTeclas.limpiarAcción();
     pintorJugador.actualizarImagenEntidad();
-
     actualizarMovimientoColmena(navesEnemigas);
   }
 
@@ -143,7 +145,7 @@ public class VentanaJuego extends JPanel implements Runnable {
     pintorJugador.dibujar(graphics2D,
       naveJugador.obtenerPosición().obtenerPosiciónX(), naveJugador.obtenerPosición().obtenerPosiciónY());
     for (Misil misil : misilesJugador) {
-      pintorMisil.dibujar(graphics2D, null, misil.obtenerPosiciónMisil().obtenerPosiciónX(), misil.obtenerPosiciónMisil().obtenerPosiciónY());
+      pintorMisil.dibujar(graphics2D, misil.obtenerPosiciónMisil().obtenerPosiciónX(), misil.obtenerPosiciónMisil().obtenerPosiciónY());
       pintorMisil.actualizarImagenEntidad();
     }
   }
@@ -160,10 +162,11 @@ public class VentanaJuego extends JPanel implements Runnable {
       delta += (tiempoActual - últimoTiempo) / intervaloDibujo;
       últimoTiempo = tiempoActual;
       if (delta >= 1) {
-        update();
+        actualizar();
         repaint();
         delta -= 1;
       }
     }
   }
+
 }
