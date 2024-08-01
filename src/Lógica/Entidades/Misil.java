@@ -4,11 +4,10 @@ import Lógica.MovimientoEntidades.MovimientoAbajo;
 import Lógica.MovimientoEntidades.MovimientoArriba;
 
 public class Misil {
+  private Posición posicion;
   private final MovimientoArriba movimientoArriba;
   private final MovimientoAbajo movimientoAbajo;
   private static final int VELOCIDAD_MISIL = 8;
-
-  private Posición posicion;
 
   public Misil(Posición posicion) {
     this.posicion = posicion;
@@ -27,4 +26,5 @@ public class Misil {
   public void dispararAbajo() {
     movimientoAbajo.mover(posicion, VELOCIDAD_MISIL);
   }
+
 }

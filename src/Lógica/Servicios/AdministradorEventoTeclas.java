@@ -7,40 +7,54 @@ import java.awt.event.KeyListener;
 import java.util.HashMap;
 
 public class AdministradorEventoTeclas implements KeyListener {
-  AcciónUsuario acción;
-
-  private final HashMap<Integer, AcciónUsuario> ventanaJuegoEventoTeclas = new HashMap<>();
+  private final HashMap<Integer, AcciónUsuario> mapaTeclas = new HashMap<>();
+  private final HashMap<AcciónUsuario, Boolean> accionesActivas = new HashMap<>();
+  AcciónUsuario acción = null;
 
   public AdministradorEventoTeclas() {
+    mapaTeclas.put(KeyEvent.VK_A, AcciónUsuario.IZQUIERDA);
+    mapaTeclas.put(KeyEvent.VK_LEFT, AcciónUsuario.IZQUIERDA);
+    mapaTeclas.put(KeyEvent.VK_D, AcciónUsuario.DERECHA);
+    mapaTeclas.put(KeyEvent.VK_RIGHT, AcciónUsuario.DERECHA);
+    mapaTeclas.put(KeyEvent.VK_SPACE, AcciónUsuario.DISPARAR);
+    //mapaTeclas.put(KeyEvent.VK_UP, AcciónUsuario.UP);
+    //mapaTeclas.put(KeyEvent.VK_DOWN, AcciónUsuario.ABAJO);
+    //mapaTeclas.put(KeyEvent.VK_ENTER, AcciónUsuario.CONFIRM);
 
-    ventanaJuegoEventoTeclas.put(KeyEvent.VK_A, AcciónUsuario.IZQUIERDA);
-    ventanaJuegoEventoTeclas.put(KeyEvent.VK_LEFT, AcciónUsuario.IZQUIERDA);
-    ventanaJuegoEventoTeclas.put(KeyEvent.VK_D, AcciónUsuario.DERECHA);
-    ventanaJuegoEventoTeclas.put(KeyEvent.VK_RIGHT, AcciónUsuario.DERECHA);
-    ventanaJuegoEventoTeclas.put(KeyEvent.VK_SPACE, AcciónUsuario.DISPARAR);
-    //ventanaJuegoEventoTeclas.put(KeyEvent.VK_UP, AcciónUsuario.UP);
-    //ventanaJuegoEventoTeclas.put(KeyEvent.VK_DOWN, AcciónUsuario.ABAJO);
-    //ventanaJuegoEventoTeclas.put(KeyEvent.VK_ENTER, AcciónUsuario.CONFIRM);
+    for (AcciónUsuario acción : AcciónUsuario.values()) {
+      accionesActivas.put(acción, false);
+    }
   }
 
   public AcciónUsuario obtenerAcción() {
-    return acción;
+    for (AcciónUsuario acción : AcciónUsuario.values()) {
+      if (accionesActivas.get(acción)) {
+        return acción;
+      }
+    }
+    return null;
   }
 
-  public void limpiarAcción() {
-    acción = null;
+  public AcciónUsuario limpiarAcción() {
+    return acción;
   }
 
   @Override
   public void keyPressed(KeyEvent e) {
     int códigoTecla = e.getKeyCode();
-    if (ventanaJuegoEventoTeclas.containsKey(códigoTecla)) {
-      acción = ventanaJuegoEventoTeclas.get(códigoTecla);
+    if (mapaTeclas.containsKey(códigoTecla)) {
+      AcciónUsuario acción = mapaTeclas.get(códigoTecla);
+      accionesActivas.put(acción, true);
     }
   }
 
   @Override
   public void keyReleased(KeyEvent e) {
+    int códigoTecla = e.getKeyCode();
+    if (mapaTeclas.containsKey(códigoTecla)) {
+      AcciónUsuario acción = mapaTeclas.get(códigoTecla);
+      accionesActivas.put(acción, false);
+    }
   }
 
   @Override
