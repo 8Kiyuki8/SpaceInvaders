@@ -33,8 +33,6 @@ public class VentanaJuego extends JPanel implements Runnable {
   private static final int TIEMPO_ENTRE_DISPAROS_ENEMIGOS = 900;
   private static final int TIEMPO_ENTRE_POWER_UPS = 10000;
   private Thread hiloJuego;
-  private long últimoTiempoDisparoJugador = 0;
-  private long últimoTiempoDisparoColmena = 0;
 
   //Controladores Juego
   private int opciónDeUsuario;
@@ -54,8 +52,8 @@ public class VentanaJuego extends JPanel implements Runnable {
   private PowerUpVida powerUpVida;
   private NaveEnemiga[][] navesEnemigas;
 
-  private ArrayList<Misil> misilesJugador;
-  private ArrayList<Misil> misilesEnemigos;
+  private ArrayList<Misil> misilesJugador = new ArrayList<>();
+  private ArrayList<Misil> misilesEnemigos = new ArrayList<>();
   private ArrayList<PowerUpVida> powerUpVidas = new ArrayList<>();
   private Colmena colmena;
   //Tiempo disparo
@@ -72,21 +70,31 @@ public class VentanaJuego extends JPanel implements Runnable {
 
 
   public VentanaJuego() {
-
     estadoDeLaVentanaActual = EstadoDeLaVentana.PRINCIPAL;
     opciónDeUsuario = 0;
+    generarNaveJugador();
+    generarColmena();
+    configurarVentana();
+    cargarImagenDeFondoDeMenúPrincipal();
+    cargarImagenDeFondo();
+    setFocusable(true);
+    reproducirSonidoInfinito(Sonido.JUEGO);
+    addKeyListener(administradorTeclas);
+    iniciarHiloJuego();
+    tiempoInicioDeJuego = System.currentTimeMillis();
+  }
 
-    misilesJugador = new ArrayList<>();
-    misilesEnemigos = new ArrayList<>();
-
+  private void generarNaveJugador() {
     int posiciónJugadorEnX = ANCHO_VENTANA / 2;
     int posiciónJugadorEnY = (ALTO_VENTANA / 2) + (TAMAÑO_ENTIDAD * 5);
-
     naveJugador = new NaveJugador(
       new Posición(
         posiciónJugadorEnX,
         posiciónJugadorEnY
       ));
+  }
+
+  private void generarColmena() {
     int filaColmena = 3;
     int columnaColmena = 8;
     colmena = new Colmena(
@@ -97,27 +105,11 @@ public class VentanaJuego extends JPanel implements Runnable {
       )
     );
     navesEnemigas = colmena.generarColmenaEnemigos(filaColmena, columnaColmena);
-
-    configurarVentana();
-    cargarImagenDeFondoDeMenúPrincipal();
-    cargarImagenDeFondo();
-    setFocusable(true);
-    reproducirSonidoInfinito(Sonido.JUEGO);
-    addKeyListener(administradorTeclas);
-    iniciarHiloJuego();
   }
 
   private void configurarVentana() {
     setPreferredSize(new Dimension(
       ANCHO_VENTANA, ALTO_VENTANA));
-  }
-
-  public static int obtenerTamañoEntidad() {
-    return TAMAÑO_ENTIDAD;
-  }
-
-  public static int obtenerAnchoVentana() {
-    return ANCHO_VENTANA;
   }
 
   private void reproducirSonido(Sonido sonido) {
@@ -250,25 +242,8 @@ public class VentanaJuego extends JPanel implements Runnable {
   }
 
   private void reiniciarJuego() {
-    int posiciónJugadorEnX = ANCHO_VENTANA / 2;
-    int posiciónJugadorEnY = (ALTO_VENTANA / 2) + (TAMAÑO_ENTIDAD * 5);
-
-    naveJugador = new NaveJugador(
-      new Posición(
-        posiciónJugadorEnX,
-        posiciónJugadorEnY
-      ));
-
-    int filaColmena = 3;
-    int columnaColmena = 8;
-    colmena = new Colmena(
-      new Posición(
-        (ANCHO_VENTANA / 2
-          - TAMAÑO_ENTIDAD * (columnaColmena / 2)),
-        (TAMAÑO_ENTIDAD * 2)
-      )
-    );
-    navesEnemigas = colmena.generarColmenaEnemigos(filaColmena, columnaColmena);
+    generarNaveJugador();
+    generarColmena();
 
     misilesJugador.clear();
     misilesEnemigos.clear();
@@ -454,5 +429,17 @@ public class VentanaJuego extends JPanel implements Runnable {
         delta -= 1;
       }
     }
+  }
+
+  public static int obtenerAnchoVentana() {
+    return ANCHO_VENTANA;
+  }
+
+  public static int obtenerAltoVentana() {
+    return ALTO_VENTANA;
+  }
+
+  public static int obtenerTamañoEntidad() {
+    return TAMAÑO_ENTIDAD;
   }
 }
