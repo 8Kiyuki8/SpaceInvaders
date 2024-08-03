@@ -1,6 +1,6 @@
 package Lógica.Entidades;
 
-import Presentación.Ventanas.VentanaAdministradora;
+import Presentación.Ventanas.VentanaJuego;
 
 import java.util.Random;
 
@@ -20,8 +20,8 @@ public class Colmena {
       for (int j = 0; j < colmenaEnemigos[0].length; j++) {
         colmenaEnemigos[i][j] = new NaveEnemiga(
           new Posición(
-            (j * VentanaAdministradora.obtenerTamañoEntidad()) + posición.obtenerPosiciónX(),
-            (i * VentanaAdministradora.obtenerTamañoEntidad() + posición.obtenerPosiciónY())
+            (j * VentanaJuego.obtenerTamañoEntidad()) + posición.obtenerPosiciónX(),
+            (i * VentanaJuego.obtenerTamañoEntidad() + posición.obtenerPosiciónY())
           )
         );
       }

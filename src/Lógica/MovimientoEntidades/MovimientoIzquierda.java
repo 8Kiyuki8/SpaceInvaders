@@ -1,7 +1,7 @@
 package Lógica.MovimientoEntidades;
 
 import Lógica.Entidades.Posición;
-import Lógica.Servicios.VerificadorColisiones;
+import Presentación.Servicios.VerificadorColisiones;
 
 public class MovimientoIzquierda implements Movimiento {
 
