@@ -1,8 +1,8 @@
 package Presentación.Servicios;
 
+
 import Presentación.Enumeraciones.AcciónUsuario;
 import Presentación.Enumeraciones.EstadoDeLaVentana;
-
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.HashMap;
@@ -15,7 +15,6 @@ public class AdministradorEventoTeclas implements KeyListener {
 
   public AdministradorEventoTeclas() {
     estadoDeLaVentanaActual = EstadoDeLaVentana.PRINCIPAL;
-
     mapaTeclas.put(KeyEvent.VK_A, AcciónUsuario.IZQUIERDA);
     mapaTeclas.put(KeyEvent.VK_LEFT, AcciónUsuario.IZQUIERDA);
     mapaTeclas.put(KeyEvent.VK_D, AcciónUsuario.DERECHA);
@@ -33,7 +32,7 @@ public class AdministradorEventoTeclas implements KeyListener {
   public void cambiarEstadoActualDeLaVentana(EstadoDeLaVentana nuevoEstado) {
     estadoDeLaVentanaActual = nuevoEstado;
   }
-
+  
   public AcciónUsuario obtenerAcción() {
     for (AcciónUsuario acción : AcciónUsuario.values()) {
       if (accionesActivas.get(acción)) {

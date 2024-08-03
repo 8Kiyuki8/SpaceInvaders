@@ -8,10 +8,22 @@ public class Colmena {
   private boolean moverDerecha = true;
   private Posición posición;
   private NaveEnemiga[][] colmenaEnemigos;
-  private Random random = new Random();
 
   public Colmena(Posición posición) {
     this.posición = posición;
+  }
+
+  public Misil disparar() {
+    Random random = new Random();
+    NaveEnemiga naveEnemiga = null;
+    int fila, columna;
+
+    while (naveEnemiga == null) {
+      fila = random.nextInt(colmenaEnemigos.length);
+      columna = random.nextInt(colmenaEnemigos[0].length);
+      naveEnemiga = colmenaEnemigos[fila][columna];
+    }
+    return naveEnemiga.disparar();
   }
 
   public NaveEnemiga[][] generarColmenaEnemigos(int filas, int columnas) {
@@ -35,18 +47,6 @@ public class Colmena {
 
   public void cambiarDirección() {
     moverDerecha = !moverDerecha;
-  }
-
-  public Misil disparar() {
-    int fila, columna;
-    NaveEnemiga naveEnemiga = null;
-
-    while (naveEnemiga == null) {
-      fila = random.nextInt(colmenaEnemigos.length);
-      columna = random.nextInt(colmenaEnemigos[0].length);
-      naveEnemiga = colmenaEnemigos[fila][columna];
-    }
-    return naveEnemiga.disparar();
   }
 
 }

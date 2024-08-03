@@ -1,12 +1,14 @@
 package Presentación.Ventanas;
 
 import Lógica.Entidades.*;
+import Presentación.Servicios.VerificarColisiones;
 import Presentación.Enumeraciones.AcciónUsuario;
 import Presentación.Enumeraciones.EstadoDeLaVentana;
 import Presentación.Enumeraciones.Sonido;
 import Presentación.Pintores.*;
 import Presentación.Servicios.AdministradorEventoTeclas;
 import Presentación.Servicios.AdministradorSonido;
+
 
 import java.awt.*;
 import javax.swing.*;
@@ -29,6 +31,7 @@ public class VentanaJuego extends JPanel implements Runnable {
   public static final int FPS_JUEGO = 60;
   private static final int TIEMPO_ENTRE_DISPAROS_JUGADOR = 450;
   private static final int TIEMPO_ENTRE_DISPAROS_ENEMIGOS = 900;
+  private static final int TIEMPO_ENTRE_POWER_UPS = 10000;
   private Thread hiloJuego;
   private long últimoTiempoDisparoJugador = 0;
   private long últimoTiempoDisparoColmena = 0;
@@ -37,22 +40,32 @@ public class VentanaJuego extends JPanel implements Runnable {
   private int opciónDeUsuario;
   private EstadoDeLaVentana estadoDeLaVentanaActual;
 
+
   //Pintores
   private final PintorJugador pintorJugador = new PintorJugador("Jugador");
   private final PintorColmena pintorColmena = new PintorColmena();
   private final PintorMisilJugador pintorMisilJugador = new PintorMisilJugador("MisilJugador");
   private final PintorMisilEnemigos pintorMisilEnemigos = new PintorMisilEnemigos("MisilEnemigos");
+  private final PintorPowerUpVida pintorPowerUpVida = new PintorPowerUpVida("PowerUpVida");
   private final AdministradorEventoTeclas administradorTeclas = new AdministradorEventoTeclas();
 
   //Entidades
   private NaveJugador naveJugador;
+  private PowerUpVida powerUpVida;
   private NaveEnemiga[][] navesEnemigas;
+
   private ArrayList<Misil> misilesJugador;
   private ArrayList<Misil> misilesEnemigos;
+  private ArrayList<PowerUpVida> powerUpVidas = new ArrayList<>();
   private Colmena colmena;
+  //Tiempo disparo
+  private long últimoTiempoDisparoJugador = 0;
+  private long últimoTiempoDisparoColmena = 0;
+  private long últimoTiempoEntrePowerUps = 0;
 
   //Imágenes de Fondo de pantalla
   private BufferedImage fondoJuego;
+  private long tiempoInicioDeJuego;
   private BufferedImage fondoMenúPrincipal;
   long tiempoDeInicioDeJuego;
   private AdministradorSonido administradorSonido = new AdministradorSonido();
@@ -74,7 +87,6 @@ public class VentanaJuego extends JPanel implements Runnable {
         posiciónJugadorEnX,
         posiciónJugadorEnY
       ));
-
     int filaColmena = 3;
     int columnaColmena = 8;
     colmena = new Colmena(
@@ -205,26 +217,35 @@ public class VentanaJuego extends JPanel implements Runnable {
     misilesEnemigos.forEach(Misil::dispararAbajo);
     misilesEnemigos.removeIf(misil -> misil.obtenerPosiciónMisil().obtenerPosiciónY() > getHeight());
 
-    administradorTeclas.limpiarAcción();
-    pintorJugador.actualizarImagenEntidad();
+    if (tiempoActual - últimoTiempoEntrePowerUps >= TIEMPO_ENTRE_POWER_UPS) {
+      powerUpVidas.add(powerUpVida.generarPowerUpVida());
+      últimoTiempoEntrePowerUps = tiempoActual;
+    }
+    powerUpVidas.forEach(PowerUpVida::caerPowerUp);
+    powerUpVidas.removeIf(powerUp -> powerUp.obtenerPosiciónPowerUp().obtenerPosiciónY() > getHeight());
+
+    VerificarColisiones.colisionaPowerUpConNaveJugador(powerUpVidas, naveJugador);
+    VerificarColisiones.colisionaJugadorConMisilDeEnemigos(misilesEnemigos, naveJugador);
+    VerificarColisiones.colisionaEnemigoConMisilDeJugador(navesEnemigas, misilesJugador, naveJugador);
+    generarNuevaColmena();
     actualizarMovimientoColmena(navesEnemigas);
-    colisionaEnemigoConMisil();
+    pintorJugador.actualizarImagenEntidad();
+    administradorTeclas.limpiarAcción();
+
   }
 
-  public void colisionaEnemigoConMisil() {
-    for (int i = 0; i < navesEnemigas.length; i++) {
-      for (int j = 0; j < navesEnemigas[i].length; j++) {
-        NaveEnemiga naveEnemiga = navesEnemigas[i][j];
-        if (naveEnemiga != null) {
-          for (Misil misil : misilesJugador) {
-            if (naveEnemiga.colisionaConMisil(misil)) {
-              navesEnemigas[i][j] = null;
-              misilesJugador.remove(misil);
-              break;
-            }
-          }
+  private void generarNuevaColmena() {
+    boolean colmenaEliminada = true;
+    for (NaveEnemiga[] fila : navesEnemigas) {
+      for (NaveEnemiga nave : fila) {
+        if (nave != null) {
+          colmenaEliminada = false;
+          break;
         }
       }
+    }
+    if (colmenaEliminada) {
+      generarColmena();
     }
   }
 
@@ -339,6 +360,18 @@ public class VentanaJuego extends JPanel implements Runnable {
   public void dibujarVentanaJuego(Graphics2D graphics2D) {
     graphics2D.drawImage(fondoJuego, 0, 0, getWidth(), getHeight(), this);
 
+    graphics2D.setFont(graphics2D.getFont().deriveFont(Font.PLAIN, 14F));
+    graphics2D.setColor(Color.LIGHT_GRAY);
+    graphics2D.drawString("Puntos: " + naveJugador.obtenerPuntos(), 10, 25);
+    graphics2D.drawString("Vidas: " + naveJugador.obtenerVida(), 10, 50);
+    long tiempoActual = System.currentTimeMillis();
+    long tiempoTranscurrido = tiempoActual - tiempoInicioDeJuego;
+    long segundosTranscurridos = tiempoTranscurrido / 1000;
+    long minutosTranscurridos = segundosTranscurridos / 60;
+    segundosTranscurridos = segundosTranscurridos % 60;
+    String tiempoCadena = String.format("Tiempo: %02d:%02d", minutosTranscurridos, segundosTranscurridos);
+    graphics2D.drawString(tiempoCadena, 10, 75);
+
     pintorColmena.dibujar(graphics2D, navesEnemigas);
     pintorJugador.dibujar(graphics2D,
       naveJugador.obtenerPosición().obtenerPosiciónX(), naveJugador.obtenerPosición().obtenerPosiciónY());
@@ -350,6 +383,11 @@ public class VentanaJuego extends JPanel implements Runnable {
       pintorMisilEnemigos.dibujar(graphics2D, misil.obtenerPosiciónMisil().obtenerPosiciónX(), misil.obtenerPosiciónMisil().obtenerPosiciónY());
       pintorMisilEnemigos.actualizarImagenEntidad();
     }
+    for (PowerUpVida powerUpVida : powerUpVidas) {
+      pintorPowerUpVida.dibujar(graphics2D, powerUpVida.obtenerPosiciónPowerUp().obtenerPosiciónX(), powerUpVida.obtenerPosiciónPowerUp().obtenerPosiciónY());
+      pintorPowerUpVida.actualizarImagenEntidad();
+    }
+
   }
 
   public void dibujarMenúPrincipal(Graphics2D graphics2D) {
