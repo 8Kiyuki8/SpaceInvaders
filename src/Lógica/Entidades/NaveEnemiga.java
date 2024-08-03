@@ -1,6 +1,7 @@
 package Lógica.Entidades;
 
 import Presentación.Ventanas.VentanaAdministradora;
+import Presentación.Ventanas.VentanaJuego;
 
 public class NaveEnemiga extends Nave {
   private static final int VELOCIDAD_NAVE = 3;
@@ -20,8 +21,8 @@ public class NaveEnemiga extends Nave {
     int misilX = misil.obtenerPosiciónMisil().obtenerPosiciónX();
     int misilY = misil.obtenerPosiciónMisil().obtenerPosiciónY();
 
-    return misilX >= naveX && misilX <= naveX + VentanaAdministradora.obtenerTamañoEntidad() &&
-      misilY >= naveY && misilY <= naveY + VentanaAdministradora.obtenerTamañoEntidad();
+    return misilX >= naveX && misilX <= naveX + VentanaJuego.obtenerTamañoEntidad() &&
+      misilY >= naveY && misilY <= naveY + VentanaJuego.obtenerTamañoEntidad();
   }
 
 }
