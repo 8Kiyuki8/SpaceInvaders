@@ -1,7 +1,7 @@
 package Presentación.Ventanas;
 
 import Lógica.Entidades.*;
-import Presentación.Servicios.VerificarColisiones;
+import Presentación.Servicios.AdministradorColisiones;
 import Presentación.Enumeraciones.AcciónUsuario;
 import Presentación.Enumeraciones.EstadoDeLaVentana;
 import Presentación.Enumeraciones.Sonido;
@@ -30,8 +30,10 @@ public class VentanaJuego extends JPanel implements Runnable {
   //Renderizado
   public static final int FPS_JUEGO = 60;
   private static final int TIEMPO_ENTRE_DISPAROS_JUGADOR = 450;
-  private static final int TIEMPO_ENTRE_DISPAROS_ENEMIGOS = 900;
-  private static final int TIEMPO_ENTRE_POWER_UPS = 10000;
+  private static final int TIEMPO_ENTRE_DISPAROS_ENEMIGOS = 950;
+  private static final int TIEMPO_ENTRE_POWER_UPS = 16000;
+  private static final int TIEMPO_ENTRE_MOVIMIENTO_MENU = 200;
+  private static final long TIEMPO_ENTRE_OVNIS = 15000;
   private Thread hiloJuego;
 
   //Controladores Juego
@@ -45,43 +47,52 @@ public class VentanaJuego extends JPanel implements Runnable {
   private final PintorMisilJugador pintorMisilJugador = new PintorMisilJugador("MisilJugador");
   private final PintorMisilEnemigos pintorMisilEnemigos = new PintorMisilEnemigos("MisilEnemigos");
   private final PintorPowerUpVida pintorPowerUpVida = new PintorPowerUpVida("PowerUpVida");
-  private final AdministradorEventoTeclas administradorTeclas = new AdministradorEventoTeclas();
+  private final PintorOvni pintorOvni = new PintorOvni("Ovni");
 
   //Entidades
   private NaveJugador naveJugador;
-  private PowerUpVida powerUpVida;
   private NaveEnemiga[][] navesEnemigas;
+  private PowerUpVida powerUpVida;
 
   private ArrayList<Misil> misilesJugador = new ArrayList<>();
   private ArrayList<Misil> misilesEnemigos = new ArrayList<>();
   private ArrayList<PowerUpVida> powerUpVidas = new ArrayList<>();
+  private ArrayList<Ovni> ovnis = new ArrayList<>();
   private Colmena colmena;
-  //Tiempo disparo
+
+  //Tiempo
   private long últimoTiempoDisparoJugador = 0;
   private long últimoTiempoDisparoColmena = 0;
   private long últimoTiempoEntrePowerUps = 0;
+  private long últimoTiempoMovimientoMenu = 0;
+  private long últimoTiempoGeneradoOvni = 0;
+  private long tiempoDeInicioDeJuego;
 
   //Imágenes de Fondo de pantalla
-  private BufferedImage fondoJuego;
-  private long tiempoInicioDeJuego;
   private BufferedImage fondoMenúPrincipal;
-  long tiempoDeInicioDeJuego;
+  private BufferedImage fondoJuego;
+
   private AdministradorSonido administradorSonido = new AdministradorSonido();
+  private final AdministradorEventoTeclas administradorTeclas = new AdministradorEventoTeclas();
 
 
   public VentanaJuego() {
     estadoDeLaVentanaActual = EstadoDeLaVentana.PRINCIPAL;
     opciónDeUsuario = 0;
+    cargarImagenDeFondoDeMenúPrincipal();
+    cargarImagenDeFondoDelJuego();
     generarNaveJugador();
     generarColmena();
     configurarVentana();
-    cargarImagenDeFondoDeMenúPrincipal();
-    cargarImagenDeFondo();
     setFocusable(true);
     reproducirSonidoInfinito(Sonido.JUEGO);
     addKeyListener(administradorTeclas);
     iniciarHiloJuego();
-    tiempoInicioDeJuego = System.currentTimeMillis();
+  }
+
+  private void configurarVentana() {
+    setPreferredSize(new Dimension(
+      ANCHO_VENTANA, ALTO_VENTANA));
   }
 
   private void generarNaveJugador() {
@@ -107,9 +118,19 @@ public class VentanaJuego extends JPanel implements Runnable {
     navesEnemigas = colmena.generarColmenaEnemigos(filaColmena, columnaColmena);
   }
 
-  private void configurarVentana() {
-    setPreferredSize(new Dimension(
-      ANCHO_VENTANA, ALTO_VENTANA));
+  private void generarNuevaColmena() {
+    boolean colmenaEliminada = true;
+    for (NaveEnemiga[] fila : navesEnemigas) {
+      for (NaveEnemiga nave : fila) {
+        if (nave != null) {
+          colmenaEliminada = false;
+          break;
+        }
+      }
+    }
+    if (colmenaEliminada) {
+      generarColmena();
+    }
   }
 
   private void reproducirSonido(Sonido sonido) {
@@ -127,18 +148,18 @@ public class VentanaJuego extends JPanel implements Runnable {
     administradorSonido.stop();
   }
 
-  private void cargarImagenDeFondo() {
+  private void cargarImagenDeFondoDeMenúPrincipal() {
     try {
-      fondoJuego = ImageIO.read(
+      fondoMenúPrincipal = ImageIO.read(
         Objects.requireNonNull(getClass().getResource("/Presentación/Recursos/FondoDeJuego/fondodejuego.png")));
     } catch (IOException e) {
       e.printStackTrace();
     }
   }
 
-  private void cargarImagenDeFondoDeMenúPrincipal() {
+  private void cargarImagenDeFondoDelJuego() {
     try {
-      fondoMenúPrincipal = ImageIO.read(
+      fondoJuego = ImageIO.read(
         Objects.requireNonNull(getClass().getResource("/Presentación/Recursos/FondoDeJuego/fondodejuego.png")));
     } catch (IOException e) {
       e.printStackTrace();
@@ -154,17 +175,25 @@ public class VentanaJuego extends JPanel implements Runnable {
     AcciónUsuario acción = administradorTeclas.obtenerAcción();
 
     if (estadoDeLaVentanaActual == EstadoDeLaVentana.PRINCIPAL) {
+      long tiempoActual = System.currentTimeMillis();
       if (acción == AcciónUsuario.ARRIBA) {
-        reproducirSonido(Sonido.OPCIÓN);
-        opciónDeUsuario = (opciónDeUsuario - 1 + 3) % 3;
+        if (tiempoActual - últimoTiempoMovimientoMenu >= TIEMPO_ENTRE_MOVIMIENTO_MENU) {
+          opciónDeUsuario = (opciónDeUsuario - 1 + 3) % 3;
+          reproducirSonido(Sonido.OPCIÓN);
+          últimoTiempoMovimientoMenu = tiempoActual;
+        }
       } else if (acción == AcciónUsuario.ABAJO) {
-        opciónDeUsuario = (opciónDeUsuario + 1) % 3;
-        reproducirSonido(Sonido.OPCIÓN);
+        if (tiempoActual - últimoTiempoMovimientoMenu >= TIEMPO_ENTRE_MOVIMIENTO_MENU) {
+          opciónDeUsuario = (opciónDeUsuario + 1) % 3;
+          reproducirSonido(Sonido.OPCIÓN);
+          últimoTiempoMovimientoMenu = tiempoActual;
+        }
       } else if (acción == AcciónUsuario.CONFIRMAR && opciónDeUsuario == 0) {
         estadoDeLaVentanaActual = EstadoDeLaVentana.JUEGO;
         tiempoDeInicioDeJuego = System.currentTimeMillis();
         administradorTeclas.cambiarEstadoActualDeLaVentana(estadoDeLaVentanaActual);
       }
+
     }
 
     if (estadoDeLaVentanaActual == EstadoDeLaVentana.JUEGO) {
@@ -185,23 +214,22 @@ public class VentanaJuego extends JPanel implements Runnable {
 
   public void actualizarJuego() {
     AcciónUsuario acciónJugador = administradorTeclas.obtenerAcción();
+    long tiempoActual = System.currentTimeMillis();
+
     if (acciónJugador == AcciónUsuario.IZQUIERDA) {
       naveJugador.moverIzquierda();
     } else if (acciónJugador == AcciónUsuario.DERECHA) {
       naveJugador.moverDerecha();
     } else if (acciónJugador == AcciónUsuario.DISPARAR) {
-      long tiempoActual = System.currentTimeMillis();
       if (tiempoActual - últimoTiempoDisparoJugador >= TIEMPO_ENTRE_DISPAROS_JUGADOR) {
         misilesJugador.add(naveJugador.disparar());
         reproducirSonido(Sonido.SONIDO_DE_BALA);
         últimoTiempoDisparoJugador = tiempoActual;
       }
     }
-
     misilesJugador.forEach(Misil::dispararArriba);
     misilesJugador.removeIf(misil -> misil.obtenerPosiciónMisil().obtenerPosiciónY() < 0);
 
-    long tiempoActual = System.currentTimeMillis();
     if (tiempoActual - últimoTiempoDisparoColmena >= TIEMPO_ENTRE_DISPAROS_ENEMIGOS) {
       misilesEnemigos.add(colmena.disparar());
       últimoTiempoDisparoColmena = tiempoActual;
@@ -216,29 +244,23 @@ public class VentanaJuego extends JPanel implements Runnable {
     powerUpVidas.forEach(PowerUpVida::caerPowerUp);
     powerUpVidas.removeIf(powerUp -> powerUp.obtenerPosiciónPowerUp().obtenerPosiciónY() > getHeight());
 
-    VerificarColisiones.colisionaPowerUpConNaveJugador(powerUpVidas, naveJugador);
-    VerificarColisiones.colisionaJugadorConMisilDeEnemigos(misilesEnemigos, naveJugador);
-    VerificarColisiones.colisionaEnemigoConMisilDeJugador(navesEnemigas, misilesJugador, naveJugador);
+    if (tiempoActual - últimoTiempoGeneradoOvni >= TIEMPO_ENTRE_OVNIS) {
+      ovnis.add(Ovni.generarOvni());
+      últimoTiempoGeneradoOvni = tiempoActual;
+    }
+    ovnis.forEach(Ovni::moverOvni);
+    ovnis.removeIf(ovni -> ovni.obtenerPosiciónOvni().obtenerPosiciónY() > getHeight());
+
+    AdministradorColisiones.colisionaConBordesDeLaPantallaJugador(naveJugador);
+    AdministradorColisiones.colisionaEnemigoConMisilDeJugador(navesEnemigas, misilesJugador, naveJugador);
+    AdministradorColisiones.colisionaJugadorConMisilDeEnemigos(misilesEnemigos, naveJugador);
+    AdministradorColisiones.colisionaOvniConMisilDeNaveJugador(ovnis, misilesJugador, naveJugador);
+    AdministradorColisiones.colisionaPowerUpConNaveJugador(powerUpVidas, naveJugador);
     generarNuevaColmena();
     actualizarMovimientoColmena(navesEnemigas);
     pintorJugador.actualizarImagenEntidad();
     administradorTeclas.limpiarAcción();
 
-  }
-
-  private void generarNuevaColmena() {
-    boolean colmenaEliminada = true;
-    for (NaveEnemiga[] fila : navesEnemigas) {
-      for (NaveEnemiga nave : fila) {
-        if (nave != null) {
-          colmenaEliminada = false;
-          break;
-        }
-      }
-    }
-    if (colmenaEliminada) {
-      generarColmena();
-    }
   }
 
   private void reiniciarJuego() {
@@ -266,30 +288,7 @@ public class VentanaJuego extends JPanel implements Runnable {
         }
       }
     }
-    boolean bordeAlcanzado = false;
-    for (int i = 0; i < colmenaEnemigos.length; i++) {
-      for (int j = 0; j < colmenaEnemigos[0].length; j++) {
-        if (colmenaEnemigos[i][j] != null) {
-          int posiciónX = colmenaEnemigos[i][j].obtenerPosición().obtenerPosiciónX();
-          if (posiciónX <= 0 || posiciónX >= ANCHO_VENTANA - TAMAÑO_ENTIDAD) {
-            bordeAlcanzado = true;
-            break;
-          }
-        }
-      }
-      if (bordeAlcanzado) break;
-    }
-
-    if (bordeAlcanzado) {
-      colmena.cambiarDirección();
-      for (int i = 0; i < colmenaEnemigos.length; i++) {
-        for (int j = 0; j < colmenaEnemigos[0].length; j++) {
-          if (colmenaEnemigos[i][j] != null) {
-            colmenaEnemigos[i][j].moverAbajo();
-          }
-        }
-      }
-    }
+    AdministradorColisiones.colisionaConBordesDeLaPantallaEnemigos(colmenaEnemigos, colmena);
   }
 
   protected void paintComponent(Graphics graphics) {
@@ -332,39 +331,6 @@ public class VentanaJuego extends JPanel implements Runnable {
     }
   }
 
-  public void dibujarVentanaJuego(Graphics2D graphics2D) {
-    graphics2D.drawImage(fondoJuego, 0, 0, getWidth(), getHeight(), this);
-
-    graphics2D.setFont(graphics2D.getFont().deriveFont(Font.PLAIN, 14F));
-    graphics2D.setColor(Color.LIGHT_GRAY);
-    graphics2D.drawString("Puntos: " + naveJugador.obtenerPuntos(), 10, 25);
-    graphics2D.drawString("Vidas: " + naveJugador.obtenerVida(), 10, 50);
-    long tiempoActual = System.currentTimeMillis();
-    long tiempoTranscurrido = tiempoActual - tiempoInicioDeJuego;
-    long segundosTranscurridos = tiempoTranscurrido / 1000;
-    long minutosTranscurridos = segundosTranscurridos / 60;
-    segundosTranscurridos = segundosTranscurridos % 60;
-    String tiempoCadena = String.format("Tiempo: %02d:%02d", minutosTranscurridos, segundosTranscurridos);
-    graphics2D.drawString(tiempoCadena, 10, 75);
-
-    pintorColmena.dibujar(graphics2D, navesEnemigas);
-    pintorJugador.dibujar(graphics2D,
-      naveJugador.obtenerPosición().obtenerPosiciónX(), naveJugador.obtenerPosición().obtenerPosiciónY());
-    for (Misil misil : misilesJugador) {
-      pintorMisilJugador.dibujar(graphics2D, misil.obtenerPosiciónMisil().obtenerPosiciónX(), misil.obtenerPosiciónMisil().obtenerPosiciónY());
-      pintorMisilJugador.actualizarImagenEntidad();
-    }
-    for (Misil misil : misilesEnemigos) {
-      pintorMisilEnemigos.dibujar(graphics2D, misil.obtenerPosiciónMisil().obtenerPosiciónX(), misil.obtenerPosiciónMisil().obtenerPosiciónY());
-      pintorMisilEnemigos.actualizarImagenEntidad();
-    }
-    for (PowerUpVida powerUpVida : powerUpVidas) {
-      pintorPowerUpVida.dibujar(graphics2D, powerUpVida.obtenerPosiciónPowerUp().obtenerPosiciónX(), powerUpVida.obtenerPosiciónPowerUp().obtenerPosiciónY());
-      pintorPowerUpVida.actualizarImagenEntidad();
-    }
-
-  }
-
   public void dibujarMenúPrincipal(Graphics2D graphics2D) {
     graphics2D.drawImage(fondoMenúPrincipal, 0, 0, ANCHO_VENTANA, ALTO_VENTANA, null);
     graphics2D.setFont(graphics2D.getFont().deriveFont(Font.BOLD, 96F));
@@ -402,6 +368,42 @@ public class VentanaJuego extends JPanel implements Runnable {
     graphics2D.drawString(texto, x, y);
     if (opciónDeUsuario == 2) {
       graphics2D.drawString(">", x - TAMAÑO_ENTIDAD, y);
+    }
+  }
+
+  public void dibujarVentanaJuego(Graphics2D graphics2D) {
+    graphics2D.drawImage(fondoJuego, 0, 0, getWidth(), getHeight(), this);
+
+    graphics2D.setFont(graphics2D.getFont().deriveFont(Font.PLAIN, 14F));
+    graphics2D.setColor(Color.LIGHT_GRAY);
+    graphics2D.drawString("Puntos: " + naveJugador.obtenerPuntos(), 10, 25);
+    graphics2D.drawString("Vidas: " + naveJugador.obtenerVida(), 10, 50);
+    long tiempoActual = System.currentTimeMillis();
+    long tiempoTranscurrido = tiempoActual - tiempoDeInicioDeJuego;
+    long segundosTranscurridos = tiempoTranscurrido / 1000;
+    long minutosTranscurridos = segundosTranscurridos / 60;
+    segundosTranscurridos = segundosTranscurridos % 60;
+    String tiempoCadena = String.format("Tiempo: %02d:%02d", minutosTranscurridos, segundosTranscurridos);
+    graphics2D.drawString(tiempoCadena, 10, 75);
+
+    pintorColmena.dibujar(graphics2D, navesEnemigas);
+    pintorJugador.dibujar(graphics2D,
+      naveJugador.obtenerPosición().obtenerPosiciónX(), naveJugador.obtenerPosición().obtenerPosiciónY());
+    for (Misil misil : misilesJugador) {
+      pintorMisilJugador.dibujar(graphics2D, misil.obtenerPosiciónMisil().obtenerPosiciónX(), misil.obtenerPosiciónMisil().obtenerPosiciónY());
+      pintorMisilJugador.actualizarImagenEntidad();
+    }
+    for (Misil misil : misilesEnemigos) {
+      pintorMisilEnemigos.dibujar(graphics2D, misil.obtenerPosiciónMisil().obtenerPosiciónX(), misil.obtenerPosiciónMisil().obtenerPosiciónY());
+      pintorMisilEnemigos.actualizarImagenEntidad();
+    }
+    for (PowerUpVida powerUpVida : powerUpVidas) {
+      pintorPowerUpVida.dibujar(graphics2D, powerUpVida.obtenerPosiciónPowerUp().obtenerPosiciónX(), powerUpVida.obtenerPosiciónPowerUp().obtenerPosiciónY());
+      pintorPowerUpVida.actualizarImagenEntidad();
+    }
+    for (Ovni ovni : ovnis) {
+      pintorOvni.dibujar(graphics2D, ovni.obtenerPosiciónOvni().obtenerPosiciónX(), ovni.obtenerPosiciónOvni().obtenerPosiciónY());
+      pintorOvni.actualizarImagenEntidad();
     }
   }
 
