@@ -1,4 +1,4 @@
-package Lógica.MovimientoEntidades;
+package Lógica.Interfaces;
 
 import Lógica.Entidades.Posición;
 
