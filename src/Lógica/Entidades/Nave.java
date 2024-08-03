@@ -3,6 +3,9 @@ package Lógica.Entidades;
 import Lógica.MovimientoEntidades.MovimientoAbajo;
 import Lógica.MovimientoEntidades.MovimientoDerecha;
 import Lógica.MovimientoEntidades.MovimientoIzquierda;
+import Presentación.Ventanas.VentanaJuego;
+
+import java.awt.*;
 
 public abstract class Nave {
   private final MovimientoIzquierda movimientoIzquierda;
@@ -35,6 +38,20 @@ public abstract class Nave {
 
   public Posición obtenerPosición() {
     return posición;
+  }
+
+  public boolean colisionaConMisil(Misil misil) {
+    Rectangle rectNaveEnemiga = new Rectangle(obtenerPosición().obtenerPosiciónX(),
+      obtenerPosición().obtenerPosiciónY(),
+      VentanaJuego.obtenerTamañoEntidad() - 24,
+      VentanaJuego.obtenerTamañoEntidad() - 24
+    );
+    Rectangle rectMisilNaveJugador = new Rectangle(misil.obtenerPosiciónMisil().obtenerPosiciónX(),
+      misil.obtenerPosiciónMisil().obtenerPosiciónY(),
+      VentanaJuego.obtenerTamañoEntidad() - 24,
+      VentanaJuego.obtenerTamañoEntidad() - 24
+    );
+    return rectNaveEnemiga.intersects(rectMisilNaveJugador);
   }
 
   public void moverDerecha() {

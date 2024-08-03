@@ -40,13 +40,4 @@ public class Colmena {
     }
     return colmenaEnemigos;
   }
-
-  public boolean obtenerDirección() {
-    return moverDerecha;
-  }
-
-  public void cambiarDirección() {
-    moverDerecha = !moverDerecha;
-  }
-
 }

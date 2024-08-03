@@ -9,6 +9,6 @@ public class MovimientoIzquierda implements Movimiento {
   @Override
   public void mover(Posición posiciónActual, int velocidad) {
     posiciónActual.establecerPosiciónX(posiciónActual.obtenerPosiciónX() - velocidad);
-    VerificarColisiones.colisionaConBordesDeLaPantalla(posiciónActual);
+    VerificarColisiones.evitarColisionarConBordesDeLaPantalla(posiciónActual);
   }
 }
