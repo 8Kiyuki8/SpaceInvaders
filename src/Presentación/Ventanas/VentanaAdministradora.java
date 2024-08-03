@@ -4,16 +4,15 @@ import java.awt.*;
 import javax.swing.*;
 import java.util.Objects;
 
-public class VentanaAdministradora {
-  public static final int TAMAÑO_ESTÁNDAR_ENTIDAD = 16;
-  public static final int ESCALA_ENTIDAD = 3;
-  public static final int TAMAÑO_ENTIDAD = TAMAÑO_ESTÁNDAR_ENTIDAD * ESCALA_ENTIDAD; //48
-  private static final int MÁXIMA_CANTIDAD_COLUMNAS = 16;
-  private static final int MÁXIMA_CANTIDAD_FILAS = 12;
-  private static final int ANCHO_VENTANA = MÁXIMA_CANTIDAD_COLUMNAS * TAMAÑO_ENTIDAD; //768
-  private static final int ALTO_VENTANA = MÁXIMA_CANTIDAD_FILAS * TAMAÑO_ENTIDAD; //576
+public class VentanaAdministradora extends JPanel {
 
-  public static JFrame crearVentana(JPanel panel) {
+  private static volatile VentanaAdministradora instancia;
+
+  public VentanaAdministradora() {
+    crearVentana();
+  }
+
+  public static JFrame crearVentana() {
     JFrame ventana = new JFrame();
     Image iconoJuego =
       new ImageIcon(
@@ -26,23 +25,25 @@ public class VentanaAdministradora {
     ventana.setResizable(false);
     ventana.setTitle("Space Invaders");
     ventana.setIconImage(iconoJuego);
-    ventana.add(panel);
-    ventana.setPreferredSize(new Dimension(ANCHO_VENTANA, ALTO_VENTANA));
+    VentanaJuego ventanaJuego = new VentanaJuego();
+    ventana.add(ventanaJuego);
     ventana.pack();
     ventana.setLocationRelativeTo(null);
     ventana.setVisible(true);
     return ventana;
   }
 
-  public static int obtenerAnchoVentana() {
-    return ANCHO_VENTANA;
+  public static VentanaAdministradora obtenerVentana() {
+    VentanaAdministradora ventanaAMostrar = instancia;
+    if (ventanaAMostrar == null) {
+      synchronized (VentanaAdministradora.class) {
+        ventanaAMostrar = instancia;
+        if (ventanaAMostrar == null) {
+          instancia = ventanaAMostrar = new VentanaAdministradora();
+        }
+      }
+    }
+    return ventanaAMostrar;
   }
 
-  public static int obtenerAltoVentana() {
-    return ALTO_VENTANA;
-  }
-
-  public static int obtenerTamañoEntidad() {
-    return TAMAÑO_ENTIDAD;
-  }
 }

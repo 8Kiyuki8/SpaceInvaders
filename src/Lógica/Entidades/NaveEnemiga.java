@@ -1,6 +1,7 @@
 package Lógica.Entidades;
 
 import Presentación.Ventanas.VentanaAdministradora;
+import Presentación.Ventanas.VentanaJuego;
 
 import java.awt.*;
 
@@ -21,7 +22,6 @@ public class NaveEnemiga extends Nave {
     return new Misil(
       new Posición(obtenerPosición().obtenerPosiciónX(), obtenerPosición().obtenerPosiciónY()));
   }
-
   public boolean colisionaConMisilNaveJugador(Misil misil) {
     Rectangle rectNaveEnemiga = new Rectangle(obtenerPosición().obtenerPosiciónX(),
       obtenerPosición().obtenerPosiciónY(),
@@ -34,6 +34,5 @@ public class NaveEnemiga extends Nave {
       VentanaAdministradora.obtenerTamañoEntidad() - 24
     );
     return rectNaveEnemiga.intersects(rectMisilNaveJugador);
-  }
 
 }
