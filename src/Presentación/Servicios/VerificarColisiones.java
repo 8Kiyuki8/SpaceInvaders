@@ -7,15 +7,16 @@ import java.util.ArrayList;
 
 public class VerificarColisiones {
 
-  public static boolean colisionaConBordesDeLaPantalla(Posición posiciónEntidad) {
+  public static void evitarColisionarConBordesDeLaPantalla(Posición posiciónEntidad) {
     if (posiciónEntidad.obtenerPosiciónX() < 0) {
       posiciónEntidad.establecerPosiciónX(0);
-      return false;
     } else if (posiciónEntidad.obtenerPosiciónX() > VentanaJuego.obtenerAnchoVentana() - VentanaJuego.obtenerTamañoEntidad()) {
       posiciónEntidad.establecerPosiciónX(VentanaJuego.obtenerAnchoVentana() - VentanaJuego.obtenerTamañoEntidad());
-      return false;
     }
-    return true;
+  }
+
+  public static boolean colisionaConBordesDeLaPantalla(int posiciónEntidadEnX) {
+    return posiciónEntidadEnX == 0 || posiciónEntidadEnX == VentanaJuego.obtenerAnchoVentana() - VentanaJuego.obtenerTamañoEntidad();
   }
 
   public static void colisionaPowerUpConNaveJugador(ArrayList<PowerUpVida> powerUpVidas, NaveJugador naveJugador) {
@@ -47,7 +48,7 @@ public class VerificarColisiones {
         NaveEnemiga naveEnemiga = navesEnemigas[i][j];
         if (naveEnemiga != null) {
           for (Misil misil : misilesJugador) {
-            if (naveEnemiga.colisionaConMisilNaveJugador(misil)) {
+            if (naveEnemiga.colisionaConMisil(misil)) {
               naveJugador.establecerPuntos(naveJugador.obtenerPuntos() + naveEnemiga.obtenerPuntos());
               navesEnemigas[i][j] = null;
               misilesJugador.remove(misil);

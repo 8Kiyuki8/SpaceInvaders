@@ -36,18 +36,4 @@ public class NaveJugador extends Nave {
     }
   }
 
-  public boolean colisionaConMisil(Misil misil) {
-    Rectangle rectNaveJugador = new Rectangle(obtenerPosición().obtenerPosiciónX(),
-      obtenerPosición().obtenerPosiciónY(),
-      VentanaJuego.obtenerTamañoEntidad() - 24,
-      VentanaJuego.obtenerTamañoEntidad() - 24
-    );
-    Rectangle rectMisilEnemigo = new Rectangle(misil.obtenerPosiciónMisil().obtenerPosiciónX(),
-      misil.obtenerPosiciónMisil().obtenerPosiciónY(),
-      VentanaJuego.obtenerTamañoEntidad() - 24,
-      VentanaJuego.obtenerTamañoEntidad() - 24
-    );
-    return rectNaveJugador.intersects(rectMisilEnemigo);
-  }
-
 }
