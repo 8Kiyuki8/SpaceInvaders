@@ -3,7 +3,7 @@ package Lógica.Entidades;
 import Lógica.Interfaces.Movimiento;
 import Lógica.MovimientoEntidades.MovimientoAbajo;
 import Lógica.Interfaces.PowerUp;
-import Presentación.Ventanas.VentanaAdministradora;
+import Presentación.Ventanas.VentanaJuego;
 
 import java.awt.*;
 import java.util.Random;
@@ -36,7 +36,7 @@ public class PowerUpVida implements PowerUp {
   public static PowerUpVida generarPowerUpVida() {
     Posición nuevaPosición = new Posición(
       new Random().nextInt(
-        VentanaAdministradora.obtenerAnchoVentana() - VentanaAdministradora.obtenerTamañoEntidad()),
+        VentanaJuego.obtenerAnchoVentana() - VentanaJuego.obtenerTamañoEntidad()),
       0);
     return new PowerUpVida(nuevaPosición);
   }
@@ -44,13 +44,13 @@ public class PowerUpVida implements PowerUp {
   public boolean colisionaConNaveJugador(NaveJugador naveJugador) {
     Rectangle rectPowerUp = new Rectangle(posición.obtenerPosiciónX(),
       posición.obtenerPosiciónY(),
-      VentanaAdministradora.obtenerTamañoEntidad() - 24,
-      VentanaAdministradora.obtenerTamañoEntidad() - 24
+      VentanaJuego.obtenerTamañoEntidad() - 24,
+      VentanaJuego.obtenerTamañoEntidad() - 24
     );
     Rectangle rectNaveJugador = new Rectangle(naveJugador.obtenerPosición().obtenerPosiciónX(),
       naveJugador.obtenerPosición().obtenerPosiciónY(),
-      VentanaAdministradora.obtenerTamañoEntidad() - 24,
-      VentanaAdministradora.obtenerTamañoEntidad() - 24
+      VentanaJuego.obtenerTamañoEntidad() - 24,
+      VentanaJuego.obtenerTamañoEntidad() - 24
     );
     return rectPowerUp.intersects(rectNaveJugador);
   }

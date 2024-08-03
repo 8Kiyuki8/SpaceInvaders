@@ -1,7 +1,7 @@
 package Presentación.Servicios;
 
 import Lógica.Entidades.*;
-import Presentación.Ventanas.VentanaAdministradora;
+import Presentación.Ventanas.VentanaJuego;
 
 import java.util.ArrayList;
 
@@ -11,8 +11,8 @@ public class VerificarColisiones {
     if (posiciónEntidad.obtenerPosiciónX() < 0) {
       posiciónEntidad.establecerPosiciónX(0);
       return false;
-    } else if (posiciónEntidad.obtenerPosiciónX() > VentanaAdministradora.obtenerAnchoVentana() - VentanaAdministradora.obtenerTamañoEntidad()) {
-      posiciónEntidad.establecerPosiciónX(VentanaAdministradora.obtenerAnchoVentana() - VentanaAdministradora.obtenerTamañoEntidad());
+    } else if (posiciónEntidad.obtenerPosiciónX() > VentanaJuego.obtenerAnchoVentana() - VentanaJuego.obtenerTamañoEntidad()) {
+      posiciónEntidad.establecerPosiciónX(VentanaJuego.obtenerAnchoVentana() - VentanaJuego.obtenerTamañoEntidad());
       return false;
     }
     return true;
