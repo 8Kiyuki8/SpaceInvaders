@@ -56,6 +56,12 @@ public class VentanaJuego extends JPanel implements Runnable {
   private ArrayList<Misil> misilesEnemigos = new ArrayList<>();
   private ArrayList<PowerUpVida> powerUpVidas = new ArrayList<>();
   private Colmena colmena;
+
+  //MovimientoColmena
+  private boolean moviendoDerecha = true;
+  private boolean colmenaDescendiendo = false;
+  private double distanciaDescendida = 0;
+
   //Tiempo disparo
   private long últimoTiempoDisparoJugador = 0;
   private long últimoTiempoDisparoColmena = 0;
@@ -254,41 +260,46 @@ public class VentanaJuego extends JPanel implements Runnable {
 
   }
 
+
   public void actualizarMovimientoColmena(NaveEnemiga[][] colmenaEnemigos) {
-    for (int i = 0; i < colmenaEnemigos.length; i++) {
-      for (int j = 0; j < colmenaEnemigos[0].length; j++) {
-        if (colmenaEnemigos[i][j] != null) {
-          if (colmena.obtenerDirección()) {
-            colmenaEnemigos[i][j].moverDerecha();
-          } else {
-            colmenaEnemigos[i][j].moverIzquierda();
-          }
-        }
-      }
-    }
     boolean bordeAlcanzado = false;
     for (int i = 0; i < colmenaEnemigos.length; i++) {
       for (int j = 0; j < colmenaEnemigos[0].length; j++) {
         if (colmenaEnemigos[i][j] != null) {
+          if (colmenaDescendiendo) {
+            colmenaEnemigos[i][j].moverAbajo();
+          } else {
+            if (moviendoDerecha) {
+              colmenaEnemigos[i][j].moverDerecha();
+            } else {
+              colmenaEnemigos[i][j].moverIzquierda();
+            }
+          }
+
+          if (VerificarColisiones.colisionaConBordesDeLaPantalla(
+            colmenaEnemigos[i][j].obtenerPosición().obtenerPosiciónX())
+          ) {
+            bordeAlcanzado = true;
+          }
+          /*
           int posiciónX = colmenaEnemigos[i][j].obtenerPosición().obtenerPosiciónX();
           if (posiciónX <= 0 || posiciónX >= ANCHO_VENTANA - TAMAÑO_ENTIDAD) {
             bordeAlcanzado = true;
-            break;
           }
+           */
         }
       }
-      if (bordeAlcanzado) break;
     }
-
-    if (bordeAlcanzado) {
-      colmena.cambiarDirección();
-      for (int i = 0; i < colmenaEnemigos.length; i++) {
-        for (int j = 0; j < colmenaEnemigos[0].length; j++) {
-          if (colmenaEnemigos[i][j] != null) {
-            colmenaEnemigos[i][j].moverAbajo();
-          }
-        }
+    if (colmenaDescendiendo) {
+      distanciaDescendida += 2.5;
+      if (distanciaDescendida >= TAMAÑO_ENTIDAD) {
+        colmenaDescendiendo = false;
+        distanciaDescendida = 0;
       }
+    } else if (bordeAlcanzado) {
+      moviendoDerecha = !moviendoDerecha;
+      colmenaDescendiendo = true;
+      distanciaDescendida = 0;
     }
   }
 
