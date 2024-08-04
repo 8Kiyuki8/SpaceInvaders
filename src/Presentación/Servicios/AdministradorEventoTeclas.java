@@ -24,6 +24,9 @@ public class AdministradorEventoTeclas implements KeyListener {
     mapaTeclas.put(KeyEvent.VK_DOWN, AcciónUsuario.ABAJO);
     mapaTeclas.put(KeyEvent.VK_ENTER, AcciónUsuario.CONFIRMAR);
 
+    estadoDeLaVentanaActual = EstadoDeLaVentana.JUEGO;
+    mapaTeclas.put(KeyEvent.VK_ESCAPE, AcciónUsuario.PAUSA);
+
     for (AcciónUsuario acción : AcciónUsuario.values()) {
       accionesActivas.put(acción, false);
     }

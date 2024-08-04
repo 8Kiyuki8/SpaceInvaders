@@ -10,7 +10,9 @@ import java.util.HashMap;
 
 public class AdministradorSonido {
   private Clip clip;
+  private Clip clipMúsica;
   private HashMap<Sonido, URL> direcciónSonido = new HashMap<>();
+  long clipTiempo;
 
   public AdministradorSonido() {
     direcciónSonido.put(Sonido.JUEGO, getClass().getResource("/Presentación/Recursos/Música/juego.wav"));
@@ -29,14 +31,38 @@ public class AdministradorSonido {
   }
 
   public void reproducir() {
+    clip.setMicrosecondPosition(clipTiempo);
     clip.start();
   }
 
-  public void stop() {
-    clip.stop();
+  public void ponerMusicaFondo() {
+    try {
+      AudioInputStream inputStream = AudioSystem.getAudioInputStream(direcciónSonido.get(Sonido.JUEGO));
+      clipMúsica = AudioSystem.getClip();
+      clipMúsica.open(inputStream);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
-  public void loop() {
-    clip.loop(Clip.LOOP_CONTINUOUSLY);
+  public void reproducirMusicaFondo() {
+    if (clipMúsica != null) {
+      clipMúsica.start();
+      clipMúsica.loop(Clip.LOOP_CONTINUOUSLY);
+    }
   }
+
+  public void detenerMusicaFondo() {
+    if (clipMúsica != null) {
+      clipMúsica.stop();
+    }
+  }
+
+  public void reanudarMusicaFondo() {
+    if (clipMúsica != null) {
+      clipMúsica.start();
+      clipMúsica.loop(Clip.LOOP_CONTINUOUSLY);
+    }
+  }
+
 }
