@@ -2,6 +2,9 @@ package Lógica.Entidades;
 
 import Lógica.MovimientoEntidades.MovimientoAbajo;
 import Lógica.MovimientoEntidades.MovimientoArriba;
+import Presentación.Ventanas.VentanaJuego;
+
+import java.awt.*;
 
 public class Misil {
   private Posición posicion;
@@ -28,4 +31,13 @@ public class Misil {
     movimientoAbajo.mover(posicion, velocidad);
   }
 
+  public Rectangle obtenerÁreaColisión() {
+    int hitBox = 24;
+    Rectangle rectMisil = new Rectangle(obtenerPosiciónMisil().obtenerPosiciónX(),
+      obtenerPosiciónMisil().obtenerPosiciónY(),
+      VentanaJuego.obtenerTamañoEntidad() - hitBox,
+      VentanaJuego.obtenerTamañoEntidad() - hitBox
+    );
+    return rectMisil;
+  }
 }

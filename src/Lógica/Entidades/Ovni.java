@@ -36,18 +36,13 @@ public class Ovni {
     return PUNTUACION_OVNI;
   }
 
-  public boolean colisionaConMisilNaveJugador(Misil misil) {
+  public Rectangle obtenerÁreaColisión() {
     int hitBox = 24;
-    Rectangle rectNaveOvni = new Rectangle(obtenerPosiciónOvni().obtenerPosiciónX(),
+    Rectangle rectOvni = new Rectangle(obtenerPosiciónOvni().obtenerPosiciónX(),
       obtenerPosiciónOvni().obtenerPosiciónY(),
       VentanaJuego.obtenerTamañoEntidad() - hitBox,
       VentanaJuego.obtenerTamañoEntidad() - hitBox
     );
-    Rectangle rectMisilNaveJugador = new Rectangle(misil.obtenerPosiciónMisil().obtenerPosiciónX(),
-      misil.obtenerPosiciónMisil().obtenerPosiciónY(),
-      VentanaJuego.obtenerTamañoEntidad() - hitBox,
-      VentanaJuego.obtenerTamañoEntidad() - hitBox
-    );
-    return rectNaveOvni.intersects(rectMisilNaveJugador);
+    return rectOvni;
   }
 }

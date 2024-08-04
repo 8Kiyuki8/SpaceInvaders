@@ -17,19 +17,14 @@ public class Barrera {
     return posición;
   }
 
-  public boolean colisionaConMisilNaveJugador(Misil misil) {
+  public Rectangle obtenerÁreaColisión() {
     int hitBox = 24;
     Rectangle rectBarrera = new Rectangle(obtenerPosición().obtenerPosiciónX(),
       obtenerPosición().obtenerPosiciónY(),
       VentanaJuego.obtenerTamañoEntidad() - hitBox,
       VentanaJuego.obtenerTamañoEntidad() - hitBox
     );
-    Rectangle rectMisil = new Rectangle(misil.obtenerPosiciónMisil().obtenerPosiciónX(),
-      misil.obtenerPosiciónMisil().obtenerPosiciónY(),
-      VentanaJuego.obtenerTamañoEntidad() - hitBox,
-      VentanaJuego.obtenerTamañoEntidad() - hitBox
-    );
-    return rectBarrera.intersects(rectMisil);
+    return rectBarrera;
   }
 
   public void reducirVida() {

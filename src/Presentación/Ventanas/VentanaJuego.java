@@ -111,7 +111,7 @@ public class VentanaJuego extends JPanel implements Runnable {
       );
     }
   }
-  
+
   public void verificarVidaJugador() {
     if (naveJugador.obtenerVida() <= 0) {
       cambiarEstadoDePantalla();
@@ -121,7 +121,7 @@ public class VentanaJuego extends JPanel implements Runnable {
   public void cambiarEstadoDePantalla() {
     estadoDeLaVentanaActual = EstadoDeLaVentana.JUEGO_TERMINADO;
   }
-  
+
   private void configurarVentana() {
     setPreferredSize(new Dimension(
       ANCHO_VENTANA, ALTO_VENTANA));
@@ -300,6 +300,7 @@ public class VentanaJuego extends JPanel implements Runnable {
     ovnis.forEach(Ovni::moverOvni);
     ovnis.removeIf(ovni -> ovni.obtenerPosiciónOvni().obtenerPosiciónY() > getHeight());
 
+    AdministradorColisiones.colisionaMisilesEnemigosConMisilesJugador(misilesEnemigos, misilesJugador);
     AdministradorColisiones.evitarColisionarConBordesDeLaPantallaJugador(naveJugador);
     AdministradorColisiones.colisionaEnemigoConMisilDeJugador(navesEnemigas, misilesJugador, naveJugador);
     AdministradorColisiones.colisionaJugadorConMisilDeEnemigos(misilesEnemigos, naveJugador);

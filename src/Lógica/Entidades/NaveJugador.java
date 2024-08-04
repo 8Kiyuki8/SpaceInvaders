@@ -1,9 +1,5 @@
 package Lógica.Entidades;
 
-import Presentación.Ventanas.VentanaJuego;
-
-import java.awt.*;
-
 public class NaveJugador extends Nave {
   private static final int VELOCIDAD_NAVE = 6;
   public static final int MAXIMO_DE_VIDAS = 3;
@@ -35,21 +31,6 @@ public class NaveJugador extends Nave {
     } else {
       super.establecerVida(nuevaVida);
     }
-  }
-
-  public boolean colisionaConMisil(Misil misil) {
-    int hitBox = 24;
-    Rectangle rectNaveJugador = new Rectangle(obtenerPosición().obtenerPosiciónX(),
-      obtenerPosición().obtenerPosiciónY(),
-      VentanaJuego.obtenerTamañoEntidad() - hitBox,
-      VentanaJuego.obtenerTamañoEntidad() - hitBox
-    );
-    Rectangle rectMisilEnemigo = new Rectangle(misil.obtenerPosiciónMisil().obtenerPosiciónX(),
-      misil.obtenerPosiciónMisil().obtenerPosiciónY(),
-      VentanaJuego.obtenerTamañoEntidad() - hitBox,
-      VentanaJuego.obtenerTamañoEntidad() - hitBox
-    );
-    return rectNaveJugador.intersects(rectMisilEnemigo);
   }
 
 }
