@@ -3,6 +3,9 @@ package Lógica.Entidades;
 import Lógica.MovimientoEntidades.MovimientoAbajo;
 import Lógica.MovimientoEntidades.MovimientoDerecha;
 import Lógica.MovimientoEntidades.MovimientoIzquierda;
+import Presentación.Ventanas.VentanaJuego;
+
+import java.awt.*;
 
 public abstract class Nave {
   private final MovimientoIzquierda movimientoIzquierda;
@@ -24,7 +27,7 @@ public abstract class Nave {
     this(nuevaPosición, velocidad);
     this.vida = vidaDeNave;
   }
-  
+
 
   public void establecerVida(int nuevaVida) {
     vida = nuevaVida;
@@ -50,4 +53,13 @@ public abstract class Nave {
     movimientoAbajo.mover(posición, velocidad);
   }
 
+  public Rectangle obtenerÁreaColisión() {
+    int hitBox = 24;
+    Rectangle rectNave = new Rectangle(obtenerPosición().obtenerPosiciónX(),
+      obtenerPosición().obtenerPosiciónY(),
+      VentanaJuego.obtenerTamañoEntidad() - hitBox,
+      VentanaJuego.obtenerTamañoEntidad() - hitBox
+    );
+    return rectNave;
+  }
 }
