@@ -6,5 +6,6 @@ public enum AcciónUsuario {
   DERECHA,
   IZQUIERDA,
   DISPARAR,
-  CONFIRMAR
+  CONFIRMAR,
+  PAUSA
 }

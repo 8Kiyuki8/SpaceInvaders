@@ -39,6 +39,7 @@ public class VentanaJuego extends JPanel implements Runnable {
   //Controladores Juego
   private int opciónDeUsuario;
   private EstadoDeLaVentana estadoDeLaVentanaActual;
+  private boolean enPausa;
 
 
   //Pintores
@@ -68,18 +69,22 @@ public class VentanaJuego extends JPanel implements Runnable {
   private double distanciaDescendida = 0;
 
   //Tiempo
+  private long últimoTiempoMovimientoMenúDePausa = 0;
+  private long últimoTiempoMovimientoEnMenúDeJuegoTerminado = 0;
   private long últimoTiempoDisparoJugador = 0;
   private long últimoTiempoDisparoColmena = 0;
   private long últimoTiempoEntrePowerUps = 0;
-  private long últimoTiempoMovimientoMenu = 0;
+  private long últimoTiempoMovimientoMenú = 0;
   private long últimoTiempoGeneradoOvni = 0;
   private long tiempoDeInicioDeJuego;
-  private long últimoTiempoMovimientoEnMenúDeJuegoTerminado = 0;
+  private long últimoTiempoConfirmar = 0;
+  private static final long TIEMPO_ENTRE_CONFIRMACIONES = 200;
 
   //Imágenes de Fondo de pantalla
   private BufferedImage fondoMenúPrincipal;
   private BufferedImage fondoJuego;
 
+  //Administradores de Eventos
   private AdministradorSonido administradorSonido = new AdministradorSonido();
   private final AdministradorEventoTeclas administradorTeclas = new AdministradorEventoTeclas();
 
@@ -87,6 +92,7 @@ public class VentanaJuego extends JPanel implements Runnable {
   public VentanaJuego() {
     estadoDeLaVentanaActual = EstadoDeLaVentana.PRINCIPAL;
     opciónDeUsuario = 0;
+    enPausa = false;
     cargarImagenDeFondoDeMenúPrincipal();
     cargarImagenDeFondoDelJuego();
     generarNaveJugador();
@@ -94,7 +100,8 @@ public class VentanaJuego extends JPanel implements Runnable {
     generarBarreras();
     configurarVentana();
     setFocusable(true);
-    reproducirSonidoInfinito(Sonido.JUEGO);
+    administradorSonido.ponerMusicaFondo();
+    administradorSonido.reproducirMusicaFondo();
     addKeyListener(administradorTeclas);
     iniciarHiloJuego();
   }
@@ -111,7 +118,7 @@ public class VentanaJuego extends JPanel implements Runnable {
       );
     }
   }
-  
+
   public void verificarVidaJugador() {
     if (naveJugador.obtenerVida() <= 0) {
       cambiarEstadoDePantalla();
@@ -121,7 +128,7 @@ public class VentanaJuego extends JPanel implements Runnable {
   public void cambiarEstadoDePantalla() {
     estadoDeLaVentanaActual = EstadoDeLaVentana.JUEGO_TERMINADO;
   }
-  
+
   private void configurarVentana() {
     setPreferredSize(new Dimension(
       ANCHO_VENTANA, ALTO_VENTANA));
@@ -170,16 +177,6 @@ public class VentanaJuego extends JPanel implements Runnable {
     administradorSonido.reproducir();
   }
 
-  private void reproducirSonidoInfinito(Sonido sonido) {
-    administradorSonido.ponerSonido(sonido);
-    administradorSonido.reproducir();
-    administradorSonido.loop();
-  }
-
-  private void detenerSonido() {
-    administradorSonido.stop();
-  }
-
   private void cargarImagenDeFondoDeMenúPrincipal() {
     try {
       fondoMenúPrincipal = ImageIO.read(
@@ -205,37 +202,67 @@ public class VentanaJuego extends JPanel implements Runnable {
 
   public void actualizar() {
     AcciónUsuario acción = administradorTeclas.obtenerAcción();
+    long tiempoActual = System.currentTimeMillis();
 
     if (estadoDeLaVentanaActual == EstadoDeLaVentana.PRINCIPAL) {
-      long tiempoActual = System.currentTimeMillis();
       if (acción == AcciónUsuario.ARRIBA) {
-        if (tiempoActual - últimoTiempoMovimientoMenu >= TIEMPO_ENTRE_MOVIMIENTO_MENU) {
+        if (tiempoActual - últimoTiempoMovimientoMenú >= TIEMPO_ENTRE_MOVIMIENTO_MENU) {
           opciónDeUsuario = (opciónDeUsuario - 1 + 3) % 3;
           reproducirSonido(Sonido.OPCIÓN);
-          últimoTiempoMovimientoMenu = tiempoActual;
+          últimoTiempoMovimientoMenú = tiempoActual;
         }
       } else if (acción == AcciónUsuario.ABAJO) {
-        if (tiempoActual - últimoTiempoMovimientoMenu >= TIEMPO_ENTRE_MOVIMIENTO_MENU) {
+        if (tiempoActual - últimoTiempoMovimientoMenú >= TIEMPO_ENTRE_MOVIMIENTO_MENU) {
           opciónDeUsuario = (opciónDeUsuario + 1) % 3;
           reproducirSonido(Sonido.OPCIÓN);
-          últimoTiempoMovimientoMenu = tiempoActual;
+          últimoTiempoMovimientoMenú = tiempoActual;
         }
-      } else if (acción == AcciónUsuario.CONFIRMAR && opciónDeUsuario == 0) {
-        estadoDeLaVentanaActual = EstadoDeLaVentana.JUEGO;
-        tiempoDeInicioDeJuego = System.currentTimeMillis();
-        administradorTeclas.cambiarEstadoActualDeLaVentana(estadoDeLaVentanaActual);
+      } else if (acción == AcciónUsuario.CONFIRMAR && tiempoActual - últimoTiempoConfirmar >= TIEMPO_ENTRE_CONFIRMACIONES) {
+        últimoTiempoConfirmar = tiempoActual;
+        if (opciónDeUsuario == 0) {
+          estadoDeLaVentanaActual = EstadoDeLaVentana.JUEGO;
+          tiempoDeInicioDeJuego = System.currentTimeMillis();
+          administradorTeclas.cambiarEstadoActualDeLaVentana(estadoDeLaVentanaActual);
+        }
       } else if (acción == AcciónUsuario.CONFIRMAR && opciónDeUsuario == 2) {
         System.exit(0);
       }
-
     }
 
     if (estadoDeLaVentanaActual == EstadoDeLaVentana.JUEGO) {
-      actualizarJuego();
+      if (enPausa) {
+        if (acción == AcciónUsuario.ARRIBA) {
+          if (tiempoActual - últimoTiempoMovimientoMenúDePausa >= TIEMPO_ENTRE_MOVIMIENTO_MENU) {
+            opciónDeUsuario = (opciónDeUsuario - 1 + 3) % 3;
+            reproducirSonido(Sonido.OPCIÓN);
+            últimoTiempoMovimientoMenúDePausa = tiempoActual;
+          }
+        } else if (acción == AcciónUsuario.ABAJO) {
+          if (tiempoActual - últimoTiempoMovimientoMenúDePausa >= TIEMPO_ENTRE_MOVIMIENTO_MENU) {
+            opciónDeUsuario = (opciónDeUsuario + 1) % 3;
+            reproducirSonido(Sonido.OPCIÓN);
+            últimoTiempoMovimientoMenúDePausa = tiempoActual;
+          }
+        } else if (acción == AcciónUsuario.CONFIRMAR && tiempoActual - últimoTiempoConfirmar >= TIEMPO_ENTRE_CONFIRMACIONES) {
+          últimoTiempoConfirmar = tiempoActual;
+          if (opciónDeUsuario == 0) {
+            reanudarJuego();
+          } else if (opciónDeUsuario == 1) {
+            //todo: GUARDAR juego
+          } else if (opciónDeUsuario == 2) {
+            reiniciarJuego();
+            administradorTeclas.cambiarEstadoActualDeLaVentana(estadoDeLaVentanaActual);
+          }
+        }
+      } else {
+        actualizarJuego();
+        if (acción == AcciónUsuario.PAUSA) {
+          pausarJuego();
+        }
+      }
     }
 
     if (estadoDeLaVentanaActual == EstadoDeLaVentana.JUEGO_TERMINADO) {
-      long tiempoActual = System.currentTimeMillis();
       if (acción == AcciónUsuario.ARRIBA) {
         if (tiempoActual - últimoTiempoMovimientoEnMenúDeJuegoTerminado >= TIEMPO_ENTRE_MOVIMIENTO_MENU) {
           opciónDeUsuario = (opciónDeUsuario - 1 + 2) % 2;
@@ -248,16 +275,21 @@ public class VentanaJuego extends JPanel implements Runnable {
           reproducirSonido(Sonido.OPCIÓN);
           últimoTiempoMovimientoEnMenúDeJuegoTerminado = tiempoActual;
         }
-      } else if (acción == AcciónUsuario.CONFIRMAR && opciónDeUsuario == 0) {
-        reiniciarJuego();
-        estadoDeLaVentanaActual = EstadoDeLaVentana.JUEGO;
-        administradorTeclas.cambiarEstadoActualDeLaVentana(estadoDeLaVentanaActual);
-      } else if (acción == AcciónUsuario.CONFIRMAR && opciónDeUsuario == 1) {
-        estadoDeLaVentanaActual = EstadoDeLaVentana.PRINCIPAL;
-        reiniciarJuego();
-        administradorTeclas.cambiarEstadoActualDeLaVentana(estadoDeLaVentanaActual);
+      } else if (acción == AcciónUsuario.CONFIRMAR && tiempoActual - últimoTiempoConfirmar >= TIEMPO_ENTRE_CONFIRMACIONES) {
+        últimoTiempoConfirmar = tiempoActual;
+        if (opciónDeUsuario == 0) {
+          reiniciarJuego();
+          reanudarMusica();
+          estadoDeLaVentanaActual = EstadoDeLaVentana.JUEGO;
+          administradorTeclas.cambiarEstadoActualDeLaVentana(estadoDeLaVentanaActual);
+        } else if (opciónDeUsuario == 1) {
+          estadoDeLaVentanaActual = EstadoDeLaVentana.PRINCIPAL;
+          reiniciarJuego();
+          administradorTeclas.cambiarEstadoActualDeLaVentana(estadoDeLaVentanaActual);
+        }
       }
     }
+
     administradorTeclas.limpiarAcción();
   }
 
@@ -321,8 +353,11 @@ public class VentanaJuego extends JPanel implements Runnable {
 
     misilesJugador.clear();
     misilesEnemigos.clear();
+    powerUpVidas.clear();
+    ovnis.clear();
 
     estadoDeLaVentanaActual = EstadoDeLaVentana.PRINCIPAL;
+    enPausa = false;
     opciónDeUsuario = 0;
     tiempoDeInicioDeJuego = System.currentTimeMillis();
   }
@@ -366,17 +401,44 @@ public class VentanaJuego extends JPanel implements Runnable {
   protected void paintComponent(Graphics graphics) {
     Graphics2D graphics2D = (Graphics2D) graphics;
     super.paintComponent(graphics);
-    if (estadoDeLaVentanaActual == EstadoDeLaVentana.PRINCIPAL) {
-      dibujarMenúPrincipal(graphics2D);
-    }
-    if (estadoDeLaVentanaActual == EstadoDeLaVentana.JUEGO) {
-      dibujarVentanaJuego(graphics2D);
-    }
-    if (estadoDeLaVentanaActual == EstadoDeLaVentana.JUEGO_TERMINADO) {
-      dibujarVentanaJuegoTerminado(graphics2D);
+    switch (estadoDeLaVentanaActual) {
+      case PRINCIPAL:
+        reanudarMusica();
+        dibujarMenúPrincipal(graphics2D);
+        break;
+      case JUEGO:
+        dibujarVentanaJuego(graphics2D);
+        if (enPausa) {
+          dibujarMenúPausa(graphics2D);
+        }
+        break;
+      case JUEGO_TERMINADO:
+        pausarMúsica();
+        dibujarVentanaJuegoTerminado(graphics2D);
+        break;
+      case PAUSA:
+        dibujarMenúPausa(graphics2D);
+        break;
     }
     graphics2D.dispose();
+  }
 
+  public void pausarJuego() {
+    enPausa = true;
+    pausarMúsica();
+  }
+
+  private void pausarMúsica() {
+    administradorSonido.detenerMusicaFondo();
+  }
+
+  public void reanudarJuego() {
+    enPausa = false;
+    reanudarMusica();
+  }
+
+  private void reanudarMusica() {
+    administradorSonido.reanudarMusicaFondo();
   }
 
   private void dibujarVentanaJuegoTerminado(Graphics2D graphics2D) {
@@ -407,6 +469,46 @@ public class VentanaJuego extends JPanel implements Runnable {
     y += TAMAÑO_ENTIDAD * 2;
     graphics2D.drawString(text, x, y);
     if (opciónDeUsuario == 1) {
+      graphics2D.drawString(">", x - TAMAÑO_ENTIDAD, y);
+    }
+  }
+
+  public void dibujarMenúPausa(Graphics2D graphics2D) {
+    graphics2D.drawImage(fondoJuego, 0, 0, ANCHO_VENTANA, ALTO_VENTANA, null);
+    graphics2D.setFont(graphics2D.getFont().deriveFont(Font.BOLD, 55F));
+
+    String text = "MENÚ DE PAUSA";
+    int x = obtenerXParaTextoCentrado(text, graphics2D);
+    int y = TAMAÑO_ENTIDAD * 3;
+
+    graphics2D.setColor(Color.gray);
+    graphics2D.drawString(text, x + 3, y + 3);
+    graphics2D.setColor(Color.white);
+    graphics2D.drawString(text, x, y);
+
+    graphics2D.setFont(graphics2D.getFont().deriveFont(Font.BOLD, 42F));
+
+    text = "VOLVER AL JUEGO";
+    x = obtenerXParaTextoCentrado(text, graphics2D);
+    y += TAMAÑO_ENTIDAD * 2;
+    graphics2D.drawString(text, x, y);
+    if (opciónDeUsuario == 0) {
+      graphics2D.drawString(">", x - TAMAÑO_ENTIDAD, y);
+    }
+
+    text = "GUARDAR PARTIDA";
+    x = obtenerXParaTextoCentrado(text, graphics2D);
+    y += TAMAÑO_ENTIDAD * 2;
+    graphics2D.drawString(text, x, y);
+    if (opciónDeUsuario == 1) {
+      graphics2D.drawString(">", x - TAMAÑO_ENTIDAD, y);
+    }
+
+    text = "VOLVER AL MENÚ PRINCIPAL";
+    x = obtenerXParaTextoCentrado(text, graphics2D);
+    y += TAMAÑO_ENTIDAD * 2;
+    graphics2D.drawString(text, x, y);
+    if (opciónDeUsuario == 2) {
       graphics2D.drawString(">", x - TAMAÑO_ENTIDAD, y);
     }
   }
