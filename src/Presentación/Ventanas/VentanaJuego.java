@@ -48,11 +48,13 @@ public class VentanaJuego extends JPanel implements Runnable {
   private final PintorMisilEnemigos pintorMisilEnemigos = new PintorMisilEnemigos("MisilEnemigos");
   private final PintorPowerUpVida pintorPowerUpVida = new PintorPowerUpVida("PowerUpVida");
   private final PintorOvni pintorOvni = new PintorOvni("Ovni");
+  private final PintorBarrera pintorBarrera = new PintorBarrera("Barrera");
 
   //Entidades
   private NaveJugador naveJugador;
   private NaveEnemiga[][] navesEnemigas;
   private PowerUpVida powerUpVida;
+  private Barrera[] barreras;
 
   private ArrayList<Misil> misilesJugador = new ArrayList<>();
   private ArrayList<Misil> misilesEnemigos = new ArrayList<>();
@@ -88,11 +90,25 @@ public class VentanaJuego extends JPanel implements Runnable {
     cargarImagenDeFondoDelJuego();
     generarNaveJugador();
     generarColmena();
+    generarBarreras();
     configurarVentana();
     setFocusable(true);
     reproducirSonidoInfinito(Sonido.JUEGO);
     addKeyListener(administradorTeclas);
     iniciarHiloJuego();
+  }
+
+  private void generarBarreras() {
+    int numeroDeBarreras = 5;
+    barreras = new Barrera[numeroDeBarreras];
+    for (int i = 0; i < barreras.length; i++) {
+      barreras[i] = new Barrera(
+        new Posición(
+          (i + 1) * (ANCHO_VENTANA / (numeroDeBarreras + 1)),
+          (ALTO_VENTANA / 4) * 3
+        )
+      );
+    }
   }
 
   private void configurarVentana() {
@@ -260,6 +276,8 @@ public class VentanaJuego extends JPanel implements Runnable {
     AdministradorColisiones.colisionaEnemigoConMisilDeJugador(navesEnemigas, misilesJugador, naveJugador);
     AdministradorColisiones.colisionaJugadorConMisilDeEnemigos(misilesEnemigos, naveJugador);
     AdministradorColisiones.colisionaOvniConMisilDeNaveJugador(ovnis, misilesJugador, naveJugador);
+    AdministradorColisiones.colisionaBarreraConMisilJugador(misilesEnemigos, barreras);
+    AdministradorColisiones.colisionaBarreraConMisilJugador(misilesJugador, barreras);
     AdministradorColisiones.colisionaPowerUpConNaveJugador(powerUpVidas, naveJugador);
     generarNuevaColmena();
     actualizarMovimientoColmena(navesEnemigas);
@@ -430,6 +448,13 @@ public class VentanaJuego extends JPanel implements Runnable {
     for (Ovni ovni : ovnis) {
       pintorOvni.dibujar(graphics2D, ovni.obtenerPosiciónOvni().obtenerPosiciónX(), ovni.obtenerPosiciónOvni().obtenerPosiciónY());
       pintorOvni.actualizarImagenEntidad();
+    }
+    for (Barrera barrera : barreras) {
+      if (barrera != null) {
+        pintorBarrera.dibujar(graphics2D, barrera.obtenerPosición().obtenerPosiciónX(), barrera.obtenerPosición().obtenerPosiciónY());
+        graphics2D.drawString("" + barrera.obtenerVida(),
+          barrera.obtenerPosición().obtenerPosiciónX() + TAMAÑO_ENTIDAD / 2 - 5, barrera.obtenerPosición().obtenerPosiciónY() + TAMAÑO_ENTIDAD / 2);
+      }
     }
   }
 
