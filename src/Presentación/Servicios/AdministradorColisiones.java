@@ -75,4 +75,22 @@ public class AdministradorColisiones {
     }
   }
 
+  public static void colisionaBarreraConMisilJugador(ArrayList<Misil> misilesJugador, Barrera[] barreras) {
+    for (int i = 0; i < barreras.length; i++) {
+      Barrera barrera = barreras[i];
+      if (barrera != null) {
+        for (Misil misil : misilesJugador) {
+          if (barrera.colisionaConMisilNaveJugador(misil)) {
+            barrera.reducirVida();
+            misilesJugador.remove(misil);
+            if (barrera.obtenerVida() < 1) {
+              barreras[i] = null;
+            }
+            break;
+          }
+        }
+      }
+    }
+  }
 }
+
