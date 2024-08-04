@@ -5,7 +5,6 @@ import java.awt.*;
 public class PintorEnemigo extends PintorEntidad {
   public static final int NÚMERO_MÁXIMO_SPRITES_ENTIDAD = 4;
   private static final int RENDERIZADO_ENEMIGO = 48;
-  //private long últimaActualización = System.nanoTime();
 
   public PintorEnemigo(String nombre) {
     super(nombre);
