@@ -24,6 +24,7 @@ public abstract class Nave {
     this(nuevaPosición, velocidad);
     this.vida = vidaDeNave;
   }
+  
 
   public void establecerVida(int nuevaVida) {
     vida = nuevaVida;

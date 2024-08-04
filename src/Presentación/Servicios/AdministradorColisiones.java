@@ -44,7 +44,6 @@ public class AdministradorColisiones {
     }
   }
 
-
   public static void colisionaJugadorConMisilDeEnemigos(ArrayList<Misil> misilesEnemigos, NaveJugador naveJugador) {
     for (int i = misilesEnemigos.size() - 1; i >= 0; i--) {
       Misil misilEnemigo = misilesEnemigos.get(i);

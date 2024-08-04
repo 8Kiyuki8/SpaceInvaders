@@ -7,7 +7,7 @@ import java.awt.*;
 
 public class Ovni {
   private static final int VELOCIDAD_OVNI = 3;
-  private static final int PUNTUACION_OVNI = 100;
+  private static final int PUNTUACION_OVNI = 50;
   private Posición posición;
   private final MovimientoDerecha movimientoDerecha;
   private static Ovni ovni;
@@ -37,15 +37,16 @@ public class Ovni {
   }
 
   public boolean colisionaConMisilNaveJugador(Misil misil) {
+    int hitBox = 24;
     Rectangle rectNaveOvni = new Rectangle(obtenerPosiciónOvni().obtenerPosiciónX(),
       obtenerPosiciónOvni().obtenerPosiciónY(),
-      VentanaJuego.obtenerTamañoEntidad() - 24,
-      VentanaJuego.obtenerTamañoEntidad() - 24
+      VentanaJuego.obtenerTamañoEntidad() - hitBox,
+      VentanaJuego.obtenerTamañoEntidad() - hitBox
     );
     Rectangle rectMisilNaveJugador = new Rectangle(misil.obtenerPosiciónMisil().obtenerPosiciónX(),
       misil.obtenerPosiciónMisil().obtenerPosiciónY(),
-      VentanaJuego.obtenerTamañoEntidad() - 24,
-      VentanaJuego.obtenerTamañoEntidad() - 24
+      VentanaJuego.obtenerTamañoEntidad() - hitBox,
+      VentanaJuego.obtenerTamañoEntidad() - hitBox
     );
     return rectNaveOvni.intersects(rectMisilNaveJugador);
   }

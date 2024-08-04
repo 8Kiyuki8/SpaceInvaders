@@ -29,15 +29,32 @@ public class Colmena {
     colmenaEnemigos = new NaveEnemiga[filas][columnas];
     for (int i = 0; i < colmenaEnemigos.length; i++) {
       for (int j = 0; j < colmenaEnemigos[0].length; j++) {
+        int puntuacion = obtenerPuntuaciónDeEnemigos(i);
         colmenaEnemigos[i][j] = new NaveEnemiga(
           new Posición(
             (j * VentanaJuego.obtenerTamañoEntidad()) + posición.obtenerPosiciónX(),
             (i * VentanaJuego.obtenerTamañoEntidad() + posición.obtenerPosiciónY())
-          )
+          ), puntuacion
+
         );
       }
     }
     return colmenaEnemigos;
   }
 
+  private int obtenerPuntuaciónDeEnemigos(int fila) {
+    int puntuaciónAzul = 6;
+    int puntuaciónIndexOutOfBounds = 4;
+    int puntuaciónNullPointerException = 2;
+    switch (fila) {
+      case 0:
+        return puntuaciónAzul;
+      case 1:
+        return puntuaciónIndexOutOfBounds;
+      case 2:
+        return puntuaciónNullPointerException;
+      default:
+        return 0;
+    }
+  }
 }

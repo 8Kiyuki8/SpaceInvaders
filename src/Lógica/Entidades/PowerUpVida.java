@@ -42,15 +42,16 @@ public class PowerUpVida implements PowerUp {
   }
 
   public boolean colisionaConNaveJugador(NaveJugador naveJugador) {
+    int hitBox = 24;
     Rectangle rectPowerUp = new Rectangle(posición.obtenerPosiciónX(),
       posición.obtenerPosiciónY(),
-      VentanaJuego.obtenerTamañoEntidad() - 24,
-      VentanaJuego.obtenerTamañoEntidad() - 24
+      VentanaJuego.obtenerTamañoEntidad() - hitBox,
+      VentanaJuego.obtenerTamañoEntidad() - hitBox
     );
     Rectangle rectNaveJugador = new Rectangle(naveJugador.obtenerPosición().obtenerPosiciónX(),
       naveJugador.obtenerPosición().obtenerPosiciónY(),
-      VentanaJuego.obtenerTamañoEntidad() - 24,
-      VentanaJuego.obtenerTamañoEntidad() - 24
+      VentanaJuego.obtenerTamañoEntidad() - hitBox,
+      VentanaJuego.obtenerTamañoEntidad() - hitBox
     );
     return rectPowerUp.intersects(rectNaveJugador);
   }
