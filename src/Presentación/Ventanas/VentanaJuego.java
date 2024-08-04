@@ -74,6 +74,7 @@ public class VentanaJuego extends JPanel implements Runnable {
   private long últimoTiempoMovimientoMenu = 0;
   private long últimoTiempoGeneradoOvni = 0;
   private long tiempoDeInicioDeJuego;
+  private long últimoTiempoMovimientoEnMenúDeJuegoTerminado = 0;
 
   //Imágenes de Fondo de pantalla
   private BufferedImage fondoMenúPrincipal;
@@ -110,7 +111,17 @@ public class VentanaJuego extends JPanel implements Runnable {
       );
     }
   }
+  
+  public void verificarVidaJugador() {
+    if (naveJugador.obtenerVida() <= 0) {
+      cambiarEstadoDePantalla();
+    }
+  }
 
+  public void cambiarEstadoDePantalla() {
+    estadoDeLaVentanaActual = EstadoDeLaVentana.JUEGO_TERMINADO;
+  }
+  
   private void configurarVentana() {
     setPreferredSize(new Dimension(
       ANCHO_VENTANA, ALTO_VENTANA));
@@ -213,6 +224,8 @@ public class VentanaJuego extends JPanel implements Runnable {
         estadoDeLaVentanaActual = EstadoDeLaVentana.JUEGO;
         tiempoDeInicioDeJuego = System.currentTimeMillis();
         administradorTeclas.cambiarEstadoActualDeLaVentana(estadoDeLaVentanaActual);
+      } else if (acción == AcciónUsuario.CONFIRMAR && opciónDeUsuario == 2) {
+        System.exit(0);
       }
 
     }
@@ -222,13 +235,28 @@ public class VentanaJuego extends JPanel implements Runnable {
     }
 
     if (estadoDeLaVentanaActual == EstadoDeLaVentana.JUEGO_TERMINADO) {
-      opciónDeUsuario = 0;
-      if (acción == AcciónUsuario.CONFIRMAR) {
+      long tiempoActual = System.currentTimeMillis();
+      if (acción == AcciónUsuario.ARRIBA) {
+        if (tiempoActual - últimoTiempoMovimientoEnMenúDeJuegoTerminado >= TIEMPO_ENTRE_MOVIMIENTO_MENU) {
+          opciónDeUsuario = (opciónDeUsuario - 1 + 2) % 2;
+          reproducirSonido(Sonido.OPCIÓN);
+          últimoTiempoMovimientoEnMenúDeJuegoTerminado = tiempoActual;
+        }
+      } else if (acción == AcciónUsuario.ABAJO) {
+        if (tiempoActual - últimoTiempoMovimientoEnMenúDeJuegoTerminado >= TIEMPO_ENTRE_MOVIMIENTO_MENU) {
+          opciónDeUsuario = (opciónDeUsuario + 1) % 2;
+          reproducirSonido(Sonido.OPCIÓN);
+          últimoTiempoMovimientoEnMenúDeJuegoTerminado = tiempoActual;
+        }
+      } else if (acción == AcciónUsuario.CONFIRMAR && opciónDeUsuario == 0) {
+        reiniciarJuego();
+        estadoDeLaVentanaActual = EstadoDeLaVentana.JUEGO;
+        administradorTeclas.cambiarEstadoActualDeLaVentana(estadoDeLaVentanaActual);
+      } else if (acción == AcciónUsuario.CONFIRMAR && opciónDeUsuario == 1) {
         estadoDeLaVentanaActual = EstadoDeLaVentana.PRINCIPAL;
         reiniciarJuego();
         administradorTeclas.cambiarEstadoActualDeLaVentana(estadoDeLaVentanaActual);
       }
-      administradorTeclas.cambiarEstadoActualDeLaVentana(estadoDeLaVentanaActual);
     }
     administradorTeclas.limpiarAcción();
   }
@@ -282,6 +310,7 @@ public class VentanaJuego extends JPanel implements Runnable {
     generarNuevaColmena();
     actualizarMovimientoColmena(navesEnemigas);
     pintorJugador.actualizarImagenEntidad();
+    verificarVidaJugador();
     administradorTeclas.limpiarAcción();
 
   }
@@ -295,8 +324,7 @@ public class VentanaJuego extends JPanel implements Runnable {
 
     estadoDeLaVentanaActual = EstadoDeLaVentana.PRINCIPAL;
     opciónDeUsuario = 0;
-    tiempoDeInicioDeJuego = 0;
-
+    tiempoDeInicioDeJuego = System.currentTimeMillis();
   }
 
   public void actualizarMovimientoColmena(NaveEnemiga[][] colmenaEnemigos) {
@@ -353,7 +381,7 @@ public class VentanaJuego extends JPanel implements Runnable {
 
   private void dibujarVentanaJuegoTerminado(Graphics2D graphics2D) {
     graphics2D.drawImage(fondoJuego, 0, 0, ANCHO_VENTANA, ALTO_VENTANA, null);
-    graphics2D.setFont(graphics2D.getFont().deriveFont(Font.BOLD, 96F));
+    graphics2D.setFont(graphics2D.getFont().deriveFont(Font.BOLD, 55F));
 
     String text = "JUEGO TERMINADO";
     int x = obtenerXParaTextoCentrado(text, graphics2D);
@@ -364,13 +392,21 @@ public class VentanaJuego extends JPanel implements Runnable {
     graphics2D.setColor(Color.white);
     graphics2D.drawString(text, x, y);
 
-    graphics2D.setFont(graphics2D.getFont().deriveFont(Font.BOLD, 48F));
+    graphics2D.setFont(graphics2D.getFont().deriveFont(Font.BOLD, 42F));
 
-    text = "SALIR";
+    text = "VOLVER A JUGAR";
     x = obtenerXParaTextoCentrado(text, graphics2D);
-    y += TAMAÑO_ENTIDAD * 3;
+    y += TAMAÑO_ENTIDAD * 2;
     graphics2D.drawString(text, x, y);
     if (opciónDeUsuario == 0) {
+      graphics2D.drawString(">", x - TAMAÑO_ENTIDAD, y);
+    }
+
+    text = "VOLVER AL MENÚ PRINCIPAL";
+    x = obtenerXParaTextoCentrado(text, graphics2D);
+    y += TAMAÑO_ENTIDAD * 2;
+    graphics2D.drawString(text, x, y);
+    if (opciónDeUsuario == 1) {
       graphics2D.drawString(">", x - TAMAÑO_ENTIDAD, y);
     }
   }
@@ -388,7 +424,7 @@ public class VentanaJuego extends JPanel implements Runnable {
     graphics2D.setColor(Color.white);
     graphics2D.drawString(texto, x, y);
 
-    graphics2D.setFont(graphics2D.getFont().deriveFont(Font.BOLD, 48F));
+    graphics2D.setFont(graphics2D.getFont().deriveFont(Font.BOLD, 42F));
 
     texto = "NUEVA PARTIDA";
     x = obtenerXParaTextoCentrado(texto, graphics2D);

@@ -50,9 +50,6 @@ public class AdministradorColisiones {
       if (naveJugador.colisionaConMisil(misilEnemigo)) {
         naveJugador.establecerVida(naveJugador.obtenerVida() - 1);
         misilesEnemigos.remove(i);
-        if (naveJugador.obtenerVida() <= 0) {
-          System.exit(0);
-        }
       }
     }
   }
