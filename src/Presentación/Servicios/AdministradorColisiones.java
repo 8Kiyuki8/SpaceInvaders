@@ -107,5 +107,17 @@ public class AdministradorColisiones {
     misilesEnemigos.removeAll(misilesEnemigosAEliminar);
     misilesJugador.removeAll(misilesJugadorAEliminar);
   }
+
+  public static void colisionarEnemigosConJugador(NaveEnemiga[][] navesEnemigas, NaveJugador naveJugador) {
+    for (int i = 0; i < navesEnemigas.length; i++) {
+      for (int j = 0; j < navesEnemigas[i].length; j++) {
+        NaveEnemiga naveEnemiga = navesEnemigas[i][j];
+        if (naveEnemiga != null && naveEnemiga.obtenerÁreaColisión().intersects(naveJugador.obtenerÁreaColisión())) {
+          naveJugador.establecerVida(0); // El jugador muere al instante
+          break;
+        }
+      }
+    }
+  }
 }
 
