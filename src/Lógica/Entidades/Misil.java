@@ -7,10 +7,11 @@ public class Misil {
   private Posición posicion;
   private final MovimientoArriba movimientoArriba;
   private final MovimientoAbajo movimientoAbajo;
-  private static final int VELOCIDAD_MISIL = 8;
+  private final int velocidad;
 
-  public Misil(Posición posicion) {
+  public Misil(Posición posicion, int velocidad) {
     this.posicion = posicion;
+    this.velocidad = velocidad;
     this.movimientoArriba = new MovimientoArriba();
     this.movimientoAbajo = new MovimientoAbajo();
   }
@@ -20,11 +21,11 @@ public class Misil {
   }
 
   public void dispararArriba() {
-    movimientoArriba.mover(posicion, VELOCIDAD_MISIL);
+    movimientoArriba.mover(posicion, velocidad);
   }
 
   public void dispararAbajo() {
-    movimientoAbajo.mover(posicion, VELOCIDAD_MISIL);
+    movimientoAbajo.mover(posicion, velocidad);
   }
 
 }

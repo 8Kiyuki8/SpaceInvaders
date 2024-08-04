@@ -7,6 +7,7 @@ import java.awt.*;
 public class NaveJugador extends Nave {
   private static final int VELOCIDAD_NAVE = 6;
   public static final int MAXIMO_DE_VIDAS = 3;
+  private static final int VELOCIDAD_MISIL_NAVE = 8;
   private int puntos;
 
   public NaveJugador(Posición posición) {
@@ -16,7 +17,7 @@ public class NaveJugador extends Nave {
 
   public Misil disparar() {
     return new Misil(
-      new Posición(obtenerPosición().obtenerPosiciónX(), obtenerPosición().obtenerPosiciónY()));
+      new Posición(obtenerPosición().obtenerPosiciónX(), obtenerPosición().obtenerPosiciónY()), VELOCIDAD_MISIL_NAVE);
   }
 
   public int obtenerPuntos() {
@@ -37,15 +38,16 @@ public class NaveJugador extends Nave {
   }
 
   public boolean colisionaConMisil(Misil misil) {
+    int hitBox = 24;
     Rectangle rectNaveJugador = new Rectangle(obtenerPosición().obtenerPosiciónX(),
       obtenerPosición().obtenerPosiciónY(),
-      VentanaJuego.obtenerTamañoEntidad() - 24,
-      VentanaJuego.obtenerTamañoEntidad() - 24
+      VentanaJuego.obtenerTamañoEntidad() - hitBox,
+      VentanaJuego.obtenerTamañoEntidad() - hitBox
     );
     Rectangle rectMisilEnemigo = new Rectangle(misil.obtenerPosiciónMisil().obtenerPosiciónX(),
       misil.obtenerPosiciónMisil().obtenerPosiciónY(),
-      VentanaJuego.obtenerTamañoEntidad() - 24,
-      VentanaJuego.obtenerTamañoEntidad() - 24
+      VentanaJuego.obtenerTamañoEntidad() - hitBox,
+      VentanaJuego.obtenerTamañoEntidad() - hitBox
     );
     return rectNaveJugador.intersects(rectMisilEnemigo);
   }
