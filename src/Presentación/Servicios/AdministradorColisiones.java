@@ -7,42 +7,16 @@ import java.util.ArrayList;
 
 public class AdministradorColisiones {
 
-  public static boolean colisionaConBordesDeLaPantallaJugador(NaveJugador naveJugador) {
+  public static void evitarColisionarConBordesDeLaPantallaJugador(NaveJugador naveJugador) {
     if (naveJugador.obtenerPosición().obtenerPosiciónX() < 0) {
       naveJugador.obtenerPosición().establecerPosiciónX(0);
-      return false;
     } else if (naveJugador.obtenerPosición().obtenerPosiciónX() > VentanaJuego.obtenerAnchoVentana() - VentanaJuego.obtenerTamañoEntidad()) {
       naveJugador.obtenerPosición().establecerPosiciónX(VentanaJuego.obtenerAnchoVentana() - VentanaJuego.obtenerTamañoEntidad());
-      return false;
     }
-    return true;
   }
 
-  public static void colisionaConBordesDeLaPantallaEnemigos(NaveEnemiga[][] colmenaEnemigos, Colmena colmena) {
-    boolean bordeAlcanzado = false;
-    for (int i = 0; i < colmenaEnemigos.length; i++) {
-      for (int j = 0; j < colmenaEnemigos[0].length; j++) {
-        if (colmenaEnemigos[i][j] != null) {
-          int posiciónX = colmenaEnemigos[i][j].obtenerPosición().obtenerPosiciónX();
-          if (posiciónX <= 0 || posiciónX >= VentanaJuego.obtenerAnchoVentana() - VentanaJuego.obtenerTamañoEntidad()) {
-            bordeAlcanzado = true;
-            break;
-          }
-        }
-      }
-      if (bordeAlcanzado) break;
-    }
-
-    if (bordeAlcanzado) {
-      colmena.cambiarDirección();
-      for (int i = 0; i < colmenaEnemigos.length; i++) {
-        for (int j = 0; j < colmenaEnemigos[0].length; j++) {
-          if (colmenaEnemigos[i][j] != null) {
-            colmenaEnemigos[i][j].moverAbajo();
-          }
-        }
-      }
-    }
+  public static boolean colisionaConBordesDeLaPantalla(int posiciónEntidadEnX) {
+    return posiciónEntidadEnX == 0 || posiciónEntidadEnX == VentanaJuego.obtenerAnchoVentana() - VentanaJuego.obtenerTamañoEntidad();
   }
 
   public static void colisionaPowerUpConNaveJugador(ArrayList<PowerUpVida> powerUpVidas, NaveJugador naveJugador) {

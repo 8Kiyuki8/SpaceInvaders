@@ -6,7 +6,7 @@ import Presentación.Ventanas.VentanaJuego;
 import java.awt.*;
 
 public class NaveEnemiga extends Nave {
-  private static final int VELOCIDAD_NAVE = 3;
+  private static final int VELOCIDAD_NAVE = 2;
   private static final int PUNTUACION_NAVE = 5;
 
 
@@ -36,4 +36,5 @@ public class NaveEnemiga extends Nave {
     );
     return rectNaveEnemiga.intersects(rectMisilNaveJugador);
   }
+
 }

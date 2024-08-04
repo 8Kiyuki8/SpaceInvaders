@@ -5,7 +5,6 @@ import Presentación.Ventanas.VentanaJuego;
 import java.util.Random;
 
 public class Colmena {
-  private boolean moverDerecha = true;
   private Posición posición;
   private NaveEnemiga[][] colmenaEnemigos;
 
@@ -39,14 +38,6 @@ public class Colmena {
       }
     }
     return colmenaEnemigos;
-  }
-
-  public boolean obtenerDirección() {
-    return moverDerecha;
-  }
-
-  public void cambiarDirección() {
-    moverDerecha = !moverDerecha;
   }
 
 }

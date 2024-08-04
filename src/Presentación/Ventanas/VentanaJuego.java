@@ -60,6 +60,11 @@ public class VentanaJuego extends JPanel implements Runnable {
   private ArrayList<Ovni> ovnis = new ArrayList<>();
   private Colmena colmena;
 
+  //MovimientoColmena
+  private boolean moviendoDerecha = true;
+  private boolean colmenaDescendiendo = false;
+  private double distanciaDescendida = 0;
+
   //Tiempo
   private long últimoTiempoDisparoJugador = 0;
   private long últimoTiempoDisparoColmena = 0;
@@ -251,7 +256,7 @@ public class VentanaJuego extends JPanel implements Runnable {
     ovnis.forEach(Ovni::moverOvni);
     ovnis.removeIf(ovni -> ovni.obtenerPosiciónOvni().obtenerPosiciónY() > getHeight());
 
-    AdministradorColisiones.colisionaConBordesDeLaPantallaJugador(naveJugador);
+    AdministradorColisiones.evitarColisionarConBordesDeLaPantallaJugador(naveJugador);
     AdministradorColisiones.colisionaEnemigoConMisilDeJugador(navesEnemigas, misilesJugador, naveJugador);
     AdministradorColisiones.colisionaJugadorConMisilDeEnemigos(misilesEnemigos, naveJugador);
     AdministradorColisiones.colisionaOvniConMisilDeNaveJugador(ovnis, misilesJugador, naveJugador);
@@ -277,18 +282,39 @@ public class VentanaJuego extends JPanel implements Runnable {
   }
 
   public void actualizarMovimientoColmena(NaveEnemiga[][] colmenaEnemigos) {
+    boolean bordeAlcanzado = false;
     for (int i = 0; i < colmenaEnemigos.length; i++) {
       for (int j = 0; j < colmenaEnemigos[0].length; j++) {
         if (colmenaEnemigos[i][j] != null) {
-          if (colmena.obtenerDirección()) {
-            colmenaEnemigos[i][j].moverDerecha();
+          if (colmenaDescendiendo) {
+            colmenaEnemigos[i][j].moverAbajo();
           } else {
-            colmenaEnemigos[i][j].moverIzquierda();
+            if (moviendoDerecha) {
+              colmenaEnemigos[i][j].moverDerecha();
+            } else {
+              colmenaEnemigos[i][j].moverIzquierda();
+            }
+          }
+          if (
+            AdministradorColisiones.colisionaConBordesDeLaPantalla(
+              colmenaEnemigos[i][j].obtenerPosición().obtenerPosiciónX())
+          ) {
+            bordeAlcanzado = true;
           }
         }
       }
     }
-    AdministradorColisiones.colisionaConBordesDeLaPantallaEnemigos(colmenaEnemigos, colmena);
+    if (colmenaDescendiendo) {
+      distanciaDescendida += 2;
+      if (distanciaDescendida >= TAMAÑO_ENTIDAD) {
+        colmenaDescendiendo = false;
+        distanciaDescendida = 0;
+      }
+    } else if (bordeAlcanzado) {
+      moviendoDerecha = !moviendoDerecha;
+      colmenaDescendiendo = true;
+      distanciaDescendida = 0;
+    }
   }
 
   protected void paintComponent(Graphics graphics) {
