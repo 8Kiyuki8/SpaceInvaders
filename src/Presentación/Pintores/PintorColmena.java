@@ -1,8 +1,6 @@
 package Presentación.Pintores;
 
 import Lógica.Entidades.NaveEnemiga;
-import Lógica.Entidades.Posición;
-import Presentación.Ventanas.VentanaAdministradora;
 
 import java.awt.*;
 import java.util.ArrayList;

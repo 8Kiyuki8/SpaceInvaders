@@ -6,7 +6,7 @@ import Presentación.Ventanas.VentanaJuego;
 import java.awt.*;
 
 public class Ovni {
-  private static final int VELOCIDAD_OVNI = 2;
+  private static final int VELOCIDAD_OVNI = 3;
   private static final int PUNTUACION_OVNI = 100;
   private Posición posición;
   private final MovimientoDerecha movimientoDerecha;
@@ -19,8 +19,7 @@ public class Ovni {
 
   public static Ovni generarOvni() {
     ovni = new Ovni(
-      new Posición(VentanaJuego.obtenerAnchoVentana() / VentanaJuego.obtenerAnchoVentana() -
-        VentanaJuego.obtenerTamañoEntidad(), 0
+      new Posición(-VentanaJuego.obtenerTamañoEntidad(), 0
       ));
     return ovni;
   }
