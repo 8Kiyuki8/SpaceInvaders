@@ -566,19 +566,17 @@ public class VentanaJuego extends JPanel implements Runnable, Serializable {
 
   public void dibujarVentanaJuego(Graphics2D graphics2D) {
     graphics2D.drawImage(fondoJuego, 0, 0, getWidth(), getHeight(), this);
-
-    graphics2D.setFont(graphics2D.getFont().deriveFont(Font.PLAIN, 14F));
+    graphics2D.setFont(graphics2D.getFont().deriveFont(Font.BOLD, 16F));
     graphics2D.setColor(Color.pink);
-    graphics2D.drawString("Puntos: " + naveJugador.obtenerPuntos(), 10, 25);
-    graphics2D.drawString("Vidas: " + naveJugador.obtenerVida(), 10, 50);
+    graphics2D.drawString("Puntos: " + naveJugador.obtenerPuntos(), 10, 65);
+    graphics2D.drawString("Vidas: " + naveJugador.obtenerVida(), 10, 90);
     long tiempoActual = System.currentTimeMillis();
     long tiempoTranscurrido = tiempoActual - tiempoDeInicioDeJuego;
     long segundosTranscurridos = tiempoTranscurrido / 1000;
     long minutosTranscurridos = segundosTranscurridos / 60;
     segundosTranscurridos = segundosTranscurridos % 60;
     String tiempoCadena = String.format("Tiempo: %02d:%02d", minutosTranscurridos, segundosTranscurridos);
-    graphics2D.drawString(tiempoCadena, 10, 75);
-
+    graphics2D.drawString(tiempoCadena, 10, 115);
     pintorColmena.dibujar(graphics2D, navesEnemigas);
     pintorJugador.dibujar(graphics2D,
       naveJugador.obtenerPosición().obtenerPosiciónX(), naveJugador.obtenerPosición().obtenerPosiciónY());
