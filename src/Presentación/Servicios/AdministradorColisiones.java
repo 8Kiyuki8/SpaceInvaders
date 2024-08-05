@@ -22,7 +22,7 @@ public class AdministradorColisiones {
   public static void colisionaPowerUpConNaveJugador(ArrayList<PowerUpVida> powerUpVidas, NaveJugador naveJugador) {
     for (int i = powerUpVidas.size() - 1; i >= 0; i--) {
       PowerUpVida powerUp = powerUpVidas.get(i);
-      if (powerUp.obtenerÁreaColisión().intersects(naveJugador.obtenerÁreaColisión())) {
+      if (powerUp.obtenerÁrea().intersects(naveJugador.obtenerÁrea())) {
         powerUp.establecerPowerUp(naveJugador);
         powerUpVidas.remove(i);
       }
@@ -34,7 +34,7 @@ public class AdministradorColisiones {
       Misil misilNaveJugador = misilesNaveJugador.get(i);
       for (int j = ovnis.size() - 1; j >= 0; j--) {
         Ovni ovni = ovnis.get(j);
-        if (ovni.obtenerÁreaColisión().intersects(misilNaveJugador.obtenerÁreaColisión())) {
+        if (ovni.obtenerÁrea().intersects(misilNaveJugador.obtenerÁrea())) {
           naveJugador.establecerPuntos(naveJugador.obtenerPuntos() + ovni.obtenerPuntosEspeciales());
           ovnis.remove(j);
           misilesNaveJugador.remove(i);
@@ -47,7 +47,7 @@ public class AdministradorColisiones {
   public static void colisionaJugadorConMisilDeEnemigos(ArrayList<Misil> misilesEnemigos, NaveJugador naveJugador) {
     for (int i = misilesEnemigos.size() - 1; i >= 0; i--) {
       Misil misilEnemigo = misilesEnemigos.get(i);
-      if (naveJugador.obtenerÁreaColisión().intersects(misilEnemigo.obtenerÁreaColisión())) {
+      if (naveJugador.obtenerÁrea().intersects(misilEnemigo.obtenerÁrea())) {
         naveJugador.establecerVida(naveJugador.obtenerVida() - 1);
         misilesEnemigos.remove(i);
       }
@@ -60,7 +60,7 @@ public class AdministradorColisiones {
         NaveEnemiga naveEnemiga = navesEnemigas[i][j];
         if (naveEnemiga != null) {
           for (Misil misil : misilesJugador) {
-            if (naveEnemiga.obtenerÁreaColisión().intersects(misil.obtenerÁreaColisión())) {
+            if (naveEnemiga.obtenerÁrea().intersects(misil.obtenerÁrea())) {
               naveJugador.establecerPuntos(naveJugador.obtenerPuntos() + naveEnemiga.obtenerPuntos());
               navesEnemigas[i][j] = null;
               misilesJugador.remove(misil);
@@ -77,7 +77,7 @@ public class AdministradorColisiones {
       Barrera barrera = barreras[i];
       if (barrera != null) {
         for (Misil misil : misilesJugador) {
-          if (barrera.obtenerÁreaColisión().intersects(misil.obtenerÁreaColisión())) {
+          if (barrera.obtenerÁrea().intersects(misil.obtenerÁrea())) {
             barrera.reducirVida();
             misilesJugador.remove(misil);
             if (barrera.obtenerVida() < 1) {
@@ -96,7 +96,7 @@ public class AdministradorColisiones {
 
     for (Misil misilEnemigo : misilesEnemigos) {
       for (Misil misilJugador : misilesJugador) {
-        if (misilEnemigo.obtenerÁreaColisión().intersects(misilJugador.obtenerÁreaColisión())) {
+        if (misilEnemigo.obtenerÁrea().intersects(misilJugador.obtenerÁrea())) {
           misilesEnemigosAEliminar.add(misilEnemigo);
           misilesJugadorAEliminar.add(misilJugador);
           break;
@@ -112,7 +112,7 @@ public class AdministradorColisiones {
     for (int i = 0; i < navesEnemigas.length; i++) {
       for (int j = 0; j < navesEnemigas[i].length; j++) {
         NaveEnemiga naveEnemiga = navesEnemigas[i][j];
-        if (naveEnemiga != null && naveEnemiga.obtenerÁreaColisión().intersects(naveJugador.obtenerÁreaColisión())) {
+        if (naveEnemiga != null && naveEnemiga.obtenerÁrea().intersects(naveJugador.obtenerÁrea())) {
           naveJugador.establecerVida(0); // El jugador muere al instante
           break;
         }

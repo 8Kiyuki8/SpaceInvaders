@@ -6,7 +6,7 @@ import Presentación.Ventanas.VentanaJuego;
 import java.awt.*;
 
 public class Ovni {
-  private static final int VELOCIDAD_OVNI = 3;
+  private static final int VELOCIDAD_OVNI = 2;
   private static final int PUNTUACION_OVNI = 50;
   private Posición posición;
   private final MovimientoDerecha movimientoDerecha;
@@ -36,7 +36,7 @@ public class Ovni {
     return PUNTUACION_OVNI;
   }
 
-  public Rectangle obtenerÁreaColisión() {
+  public Rectangle obtenerÁrea() {
     int hitBox = 24;
     Rectangle rectOvni = new Rectangle(obtenerPosiciónOvni().obtenerPosiciónX(),
       obtenerPosiciónOvni().obtenerPosiciónY(),

@@ -180,7 +180,7 @@ public class VentanaJuego extends JPanel implements Runnable {
   private void cargarImagenDeFondoDeMenúPrincipal() {
     try {
       fondoMenúPrincipal = ImageIO.read(
-        Objects.requireNonNull(getClass().getResource("/Presentación/Recursos/FondoDeJuego/fondodejuego.png")));
+        Objects.requireNonNull(getClass().getResource("/Presentación/Recursos/FondoDeJuego/fondodemenu.png")));
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -451,12 +451,17 @@ public class VentanaJuego extends JPanel implements Runnable {
     int x = obtenerXParaTextoCentrado(text, graphics2D);
     int y = TAMAÑO_ENTIDAD * 3;
 
-    graphics2D.setColor(Color.gray);
+    graphics2D.setColor(Color.YELLOW);
     graphics2D.drawString(text, x + 3, y + 3);
-    graphics2D.setColor(Color.white);
+    graphics2D.setColor(Color.green);
     graphics2D.drawString(text, x, y);
 
     graphics2D.setFont(graphics2D.getFont().deriveFont(Font.BOLD, 42F));
+
+    text = "PUNTAJE:  ";
+    x = obtenerXParaTextoCentrado(text, graphics2D);
+    y += TAMAÑO_ENTIDAD * 2;
+    graphics2D.drawString(text + naveJugador.obtenerPuntos(), x + 42 - TAMAÑO_ENTIDAD, y);
 
     text = "VOLVER A JUGAR";
     x = obtenerXParaTextoCentrado(text, graphics2D);
@@ -483,9 +488,9 @@ public class VentanaJuego extends JPanel implements Runnable {
     int x = obtenerXParaTextoCentrado(text, graphics2D);
     int y = TAMAÑO_ENTIDAD * 3;
 
-    graphics2D.setColor(Color.gray);
+    graphics2D.setColor(Color.blue);
     graphics2D.drawString(text, x + 3, y + 3);
-    graphics2D.setColor(Color.white);
+    graphics2D.setColor(Color.cyan);
     graphics2D.drawString(text, x, y);
 
     graphics2D.setFont(graphics2D.getFont().deriveFont(Font.BOLD, 42F));
@@ -523,9 +528,9 @@ public class VentanaJuego extends JPanel implements Runnable {
     int x = obtenerXParaTextoCentrado(texto, graphics2D);
     int y = TAMAÑO_ENTIDAD * 3;
 
-    graphics2D.setColor(Color.gray);
+    graphics2D.setColor(Color.yellow);
     graphics2D.drawString(texto, x + 3, y + 3);
-    graphics2D.setColor(Color.white);
+    graphics2D.setColor(Color.orange);
     graphics2D.drawString(texto, x, y);
 
     graphics2D.setFont(graphics2D.getFont().deriveFont(Font.BOLD, 42F));
@@ -559,7 +564,7 @@ public class VentanaJuego extends JPanel implements Runnable {
     graphics2D.drawImage(fondoJuego, 0, 0, getWidth(), getHeight(), this);
 
     graphics2D.setFont(graphics2D.getFont().deriveFont(Font.PLAIN, 14F));
-    graphics2D.setColor(Color.LIGHT_GRAY);
+    graphics2D.setColor(Color.pink);
     graphics2D.drawString("Puntos: " + naveJugador.obtenerPuntos(), 10, 25);
     graphics2D.drawString("Vidas: " + naveJugador.obtenerVida(), 10, 50);
     long tiempoActual = System.currentTimeMillis();

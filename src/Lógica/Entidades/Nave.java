@@ -53,7 +53,7 @@ public abstract class Nave {
     movimientoAbajo.mover(posición, velocidad);
   }
 
-  public Rectangle obtenerÁreaColisión() {
+  public Rectangle obtenerÁrea() {
     int hitBox = 24;
     Rectangle rectNave = new Rectangle(obtenerPosición().obtenerPosiciónX(),
       obtenerPosición().obtenerPosiciónY(),
