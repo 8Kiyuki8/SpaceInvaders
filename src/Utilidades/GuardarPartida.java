@@ -26,6 +26,8 @@ public class GuardarPartida {
       ObjectInputStream manejadorDeLectura = new ObjectInputStream(flujoDeEntrada);
       escrituraDeJuego = (EscrituraDeJuego) manejadorDeLectura.readObject();
       manejadorDeLectura.close();
+    } catch (FileNotFoundException e) {
+      throw new FileNotFoundException();
     } catch (IOException | ClassNotFoundException e) {
       throw new RuntimeException(e);
     }

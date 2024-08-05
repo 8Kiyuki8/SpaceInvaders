@@ -11,6 +11,7 @@ import Utilidades.GuardarPartida;
 
 import java.awt.*;
 import javax.swing.*;
+import java.io.FileNotFoundException;
 import java.io.Serializable;
 import java.util.*;
 import javax.imageio.ImageIO;
@@ -55,10 +56,10 @@ public class VentanaJuego extends JPanel implements Runnable, Serializable {
   private NaveEnemiga[][] navesEnemigas;
   private Barrera[] barreras;
 
-  private final ArrayList<Misil> misilesJugador = new ArrayList<>();
-  private final ArrayList<Misil> misilesEnemigos = new ArrayList<>();
+  private ArrayList<Misil> misilesJugador = new ArrayList<>();
+  private ArrayList<Misil> misilesEnemigos = new ArrayList<>();
   private final ArrayList<PowerUpVida> powerUpVidas = new ArrayList<>();
-  private final ArrayList<Ovni> ovnis = new ArrayList<>();
+  private ArrayList<Ovni> ovnis = new ArrayList<>();
   private Colmena colmena;
 
   //MovimientoColmena
@@ -352,9 +353,9 @@ public class VentanaJuego extends JPanel implements Runnable, Serializable {
     generarNaveJugador();
     generarColmena();
     generarBarreras();
-    
+
     moviendoDerecha = true;
-    
+
     misilesJugador.clear();
     misilesEnemigos.clear();
     powerUpVidas.clear();
@@ -675,6 +676,11 @@ public class VentanaJuego extends JPanel implements Runnable, Serializable {
 
       estadoDeLaVentanaActual = EstadoDeLaVentana.JUEGO;
       administradorTeclas.cambiarEstadoActualDeLaVentana(estadoDeLaVentanaActual);
+    } catch (FileNotFoundException e) {
+      estadoDeLaVentanaActual = EstadoDeLaVentana.PRINCIPAL;
+      //administradorTeclas.cambiarEstadoActualDeLaVentana(estadoDeLaVentanaActual);
+      //JOptionPane.showMessageDialog(this, "No existe una partida guardada.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+      //opciónDeUsuario = 0;
     } catch (IOException | ClassNotFoundException e) {
       e.printStackTrace();
     }
