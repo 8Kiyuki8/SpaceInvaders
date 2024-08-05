@@ -1,209 +1,388 @@
 @startuml
-package "Lógica" {
-    class SpaceInvaders {
-        -enemigos[] : NaveEnemiga
-        -jugador : Jugador
-        -ovni : Ovni
-        +iniciarJuego() : void
-        +obtenerPuntuación() : Puntuación
-        +finalizarJuego() : void
-        +calcularPuntaje() : void
-        +mostrarResultadosDePartida(Puntuación, Tiempo) : void
+package "SpaceInvaders" {
+class VentanaAdministradora {
+    - instancia: VentanaAdministradora
+    + obtenerVentana(): VentanaAdministradora
+    + crearVentana(): JFrame
+}
+class VentanaJuego {
+    + TIEMPO_ENTRE_MOVIMIENTO_MENU: int
+    + TAMAÑO_ESTÁNDAR_ENTIDAD: int
+    + ANCHO_VENTANA: int
+    + MÁXIMA_CANTIDAD_COLUMNAS: int
+    + TIEMPO_ENTRE_DISPAROS_JUGADOR: int
+    + TIEMPO_ENTRE_POWER_UPS: int
+    + FPS_JUEGO: int
+    + ESCALA_ENTIDAD: int
+    + MÁXIMA_CANTIDAD_FILAS: int
+    + TIEMPO_ENTRE_DISPAROS_ENEMIGOS: int
+    + TIEMPO_ENTRE_OVNIS: long
+    + TIEMPO_ENTRE_CONFIRMACIONES: long
+    + ALTO_VENTANA: int
+    + TAMAÑO_ENTIDAD: int
+    - últimoTiempoGeneradoOvni: long
+    - fondoMenúPrincipal: BufferedImage
+    - distanciaDescendida: double
+    - pintorMisilEnemigos: PintorEntidad
+    - enPausa: boolean
+    - administradorTeclas: AdministradorEventoTeclas
+    - pintorColmena: PintorColmena
+    - misilesEnemigos: ArrayList<Misil>
+    - moviendoDerecha: boolean
+    - tiempoDeInicioDeJuego: long
+    - hiloJuego: Thread
+    - administradorSonido: AdministradorSonido
+    - naveJugador: NaveJugador
+    - últimoTiempoMovimientoMenú: long
+    - colmenaDescendiendo: boolean
+    - pintorJugador: PintorEntidad
+    - últimoTiempoMovimientoMenúDePausa: long
+    - ovnis: ArrayList<Ovni>
+    - últimoTiempoConfirmar: long
+    - navesEnemigas: NaveEnemiga[][]
+    - pintorPowerUpVida: PintorEntidad
+    - opciónDeUsuario: int
+    - últimoTiempoDisparoColmena: long
+    - últimoTiempoMovimientoEnMenúDeJuegoTerminado: long
+    - últimoTiempoDisparoJugador: long
+    - pintorBarrera: PintorEntidad
+    - estadoDeLaVentanaActual: EstadoDeLaVentana
+    - fondoJuego: BufferedImage
+    - colmena: Colmena
+    - misilesJugador: ArrayList<Misil>
+    - pintorMisilJugador: PintorEntidad
+    - pintorOvni: PintorEntidad
+    - últimoTiempoEntrePowerUps: long
+    - barreras: Barrera[]
+    - powerUpVidas: ArrayList<PowerUpVida>
+    + verificarVidaJugador(): void
+    + iniciarHiloJuego(): void
+    - generarNaveJugador(): void
+    + cambiarEstadoDePantalla(): void
+    + actualizar(): void
+    - generarNuevaColmena(): void
+    - generarBarreras(): void
+    - reproducirSonido(Sonido): void
+    + dibujarMenúPrincipal(Graphics2D): void
+    - cargarImagenDeFondoDelJuego(): void
+    - guardarPartida(): void
+    + pausarJuego(): void
+    + dibujarMenúPausa(Graphics2D): void
+    - configurarVentana(): void
+    - reanudarMusica(): void
+    - pausarMúsica(): void
+    - dibujarVentanaJuegoTerminado(Graphics2D): void
+    + run(): void
+    + actualizarJuego(): void
+    + obtenerTamañoEntidad(): int
+    - cargarPartida(): void
+    + dibujarVentanaJuego(Graphics2D): void
+    - generarColmena(): void
+    - reiniciarJuego(): void
+    # paintComponent(Graphics): void
+    - obtenerXParaTextoCentrado(String, Graphics2D): int
+    + obtenerAnchoVentana(): int
+    - cargarImagenDeFondoDeMenúPrincipal(): void
+    + actualizarMovimientoColmena(NaveEnemiga[][]): void
+    + reanudarJuego(): void
     }
-    class Tiempo {
-        -milisegundos : long
-        +obtenerMilisegundos() : long
-    }
-    class Puntuación {
-        -puntaje : int
-        +obtenerPuntuación() : int
-    }
-    class NaveEnemiga {
-        -movimiento: MovimientoEnemigo
-        +obtenerMovimiento(): MovimientoEnemigo
-    }
-    class NaveJugador {
-        -movimiento: Movimiento
-        +obtenerMovimiento(): Movimiento
-    }
-    enum Dirección <<enumeration>> {
-        +DERECHA:
-        +IZQUIERDA:
-    }
-    class Ovni
-    class Vida {
-        -vida : int
-        +obtenerVida() : int
-    }
-
-    abstract class PowerUp
-
-    abstract class Misil {
-        -velocidad : int
-    }
-
-    class MisilCongelante{}
-    class MisilPredeterminado
-
-    abstract class Nave {
-            -posición: Posición
-            +obtenerPosición(): Posición
-        }
-
-    abstract class Movimiento {
-        -izquierda : int
-        -derecha : int
-        +moverDerecha() : Movimiento
-        +moverIzquierda() : Movimiento
-        +moverIzquierda(Posición, int): void
-        +actualizarMovimiento(Posición, Dirección): void
-        +moverDerecha(Posición, int): void
-    }
-    class MovimientoJugador {
-        -VELOCIDAD_JUGADOR_POR DEFECTO: int
-        +actualizarMovimiento(Posición, Dirección): void
-    }
-    class MovimientoEnemigo {
-        -VELOCIDAD_ENEMIGO_POR DEFECTO: int
-        -abajo : int
-        +actualizarMovimiento(Posición, Dirección): void
-        +moverAbajo(Posición, int): void
-        +moverAbajo() : Movimiento
-    }
-
-    class VidaPowerUp {
-        +aumentarVida() : void
-    }
-
-    class MisilPowerUp {
-        +duplicarMisil() : void
-    }
-
-    class VelocidadPowerUp {
-        +aumentarVelocidad() : void
-    }
-
-    class Posición {
-            -posiciónX: int
-            -posiciónY: int
-            +establecerPosiciónX(int): void
-            +establecerPosiciónY(int): void
-            +obtenerPosiciónX(): int
-            +obtenerPosiciónY(): int
-        }
-
-    SpaceInvaders --> Nave
-    SpaceInvaders -left-> Tiempo
-    SpaceInvaders -right-> Puntuación
-
-    NaveJugador -|>  Nave
-    Nave <|-- NaveEnemiga
-    Ovni -l-|> Nave
-    NaveJugador --l-> PowerUp
-    Ovni --> "1" Vida
-
-    NaveEnemiga --> "1" Vida
-    NaveJugador --> "1..3   " Vida
-
-    VidaPowerUp -u-|> PowerUp
-    MisilPowerUp -u-|> PowerUp
-    PowerUp <|-l- VelocidadPowerUp
-
-    Movimiento <|-- MovimientoJugador
-    Movimiento <|-- MovimientoEnemigo
-
-    Nave --> Movimiento
-    Nave --r> Misil
-    Nave --> Posición
-
-    MisilCongelante -l-|> Misil
-    MisilPredeterminado -l-|> Misil
-    Movimiento --> Dirección
 }
 
-package "Presentación" {
+package "LogicaSpaceInvaders" {
+    class Barrera {
+    - posición: Posición
+    - vidas: int
+    + obtenerPosición(): Posición
+    + obtenerÁrea(): Rectangle
+    + reducirVida(): void
+    + obtenerVida(): int
+    }
+    class Colmena {
+    - posición: Posición
+    - colmenaEnemigos: NaveEnemiga[][]
+    + generarColmenaEnemigos(int, int): NaveEnemiga[][]
+    - obtenerPuntuaciónDeEnemigos(int): int
+    + disparar(): Misil
+    }
+    class EscrituraDeJuego {
+    - naveJugador: NaveJugador
+    - moviendoDerecha: boolean
+    - distanciaDescendida: double
+    - barreras: Barrera[]
+    - misilesEnemigos: ArrayList<Misil>
+    - colmenaDescendiendo: boolean
+    - tiempoDeInicioDeJuego: long
+    - navesEnemigas: NaveEnemiga[][]
+    - misilesJugador: ArrayList<Misil>
+    - ovnis: ArrayList<Ovni>
+    + setNaveJugador(NaveJugador): void
+    + obtenerOvnis(): ArrayList<Ovni>
+    + setMoviendoDerecha(boolean): void
+    + estaColmenaDescendiendo(): boolean
+    + obtenerMisilesJugador(): ArrayList<Misil>
+    + setDistanciaDescendida(double): void
+    + setMisilesEnemigos(ArrayList<Misil>): void
+    + obtenerMisilesEnemigos(): ArrayList<Misil>
+    + obtenerNavesEnemigas(): NaveEnemiga[][]
+    + setOvnis(ArrayList<Ovni>): void
+    + obtenerBarreras(): Barrera[]
+    + obtenerNaveJugador(): NaveJugador
+    + estaMoviendoDerecha(): boolean
+    + setMisilesJugador(ArrayList<Misil>): void
+    + obtenerDistanciaDescendida(): double
+    + setNavesEnemigas(NaveEnemiga[][]): void
+    + setTiempoDeInicioDeJuego(long): void
+    + setColmenaDescendiendo(boolean): void
+    + setBarreras(Barrera[]): void
+    + obtenerTiempoDeInicioDeJuego(): long
+    }
+    class GuardarPartida {
+    + guardarEstado(EscrituraDeJuego): void
+    + cargarEstado(): EscrituraDeJuego
+    }
+    class Misil {
+    - velocidad: int
+    - movimientoArriba: MovimientoArriba
+    - movimientoAbajo: MovimientoAbajo
+    - posicion: Posición
+    + dispararAbajo(): void
+    + obtenerPosiciónMisil(): Posición
+    + obtenerÁrea(): Rectangle
+    + dispararArriba(): void
+    }
+    interface Movimiento << interface >> {
+    + mover(Posición, int): void
+    }
+    class MovimientoAbajo {
+    + mover(Posición, int): void
+    }
+    class MovimientoArriba {
+    + mover(Posición, int): void
+    }
+    class MovimientoDerecha {
+    + mover(Posición, int): void
+    }
+    class MovimientoIzquierda {
+    + mover(Posición, int): void
+    }
+    abstract class Nave {
+    - posición: Posición
+    - vida: int
+    - movimientoIzquierda: MovimientoIzquierda
+    - movimientoDerecha: MovimientoDerecha
+    - movimientoAbajo: MovimientoAbajo
+    - velocidad: int
+    + obtenerVida(): int
+    + moverIzquierda(): void
+    + moverAbajo(): void
+    + obtenerPosición(): Posición
+    + moverDerecha(): void
+    + establecerVida(int): void
+    + obtenerÁrea(): Rectangle
+    }
+    class NaveEnemiga {
+    - VELOCIDAD_MISIL_NAVE: int
+    - puntajeNave: int
+    - VELOCIDAD_NAVE: int
+    + disparar(): Misil
+    + obtenerPuntos(): int
+    }
+    class NaveJugador {
+    + MAXIMO_DE_VIDAS: int
+    - VELOCIDAD_NAVE: int
+    - VELOCIDAD_MISIL_NAVE: int
+    - puntos: int
+    + establecerVida(int): void
+    + obtenerPuntos(): int
+    + establecerPuntos(int): void
+    + disparar(): Misil
+    }
+    class Ovni {
+    - ovni: Ovni
+    - posición: Posición
+    - movimientoDerecha: MovimientoDerecha
+    - PUNTUACION_OVNI: int
+    - VELOCIDAD_OVNI: int
+    + obtenerPosiciónOvni(): Posición
+    + generarOvni(): Ovni
+    + obtenerÁrea(): Rectangle
+    + moverOvni(): void
+    + obtenerPuntosEspeciales(): int
+    }
+    class Posición {
+    - posiciónX: int
+    - posiciónY: int
+    + establecerPosiciónX(int): void
+    + establecerPosiciónY(int): void
+    + obtenerPosiciónX(): int
+    + obtenerPosiciónY(): int
+    }
+    interface PowerUp << interface >> {
+    + establecerPowerUp(NaveJugador): void
+    + obtenerPosiciónPowerUp(): Posición
+    + caerPowerUp(): void
+    }
+    class PowerUpVida {
+    + IMCREMENTADOR_DE_VIDA: int
+    - movimientoAbajo: Movimiento
+    - posición: Posición
+    + VELOCIDAD_POWER_UP: int
+    + establecerPowerUp(NaveJugador): void
+    + generarPowerUpVida(): PowerUpVida
+    + caerPowerUp(): void
+    + obtenerPosiciónPowerUp(): Posición
+    + obtenerÁrea(): Rectangle
+    }
+}
+
+Colmena -->"24" NaveEnemiga
+Colmena --> Misil
+
+EscrituraDeJuego --> NaveJugador
+EscrituraDeJuego -->"5" Barrera
+EscrituraDeJuego -->"0..*" Misil
+EscrituraDeJuego -->"24" NaveEnemiga
+EscrituraDeJuego -u->"0..*" Ovni
+
+GuardarPartida --> EscrituraDeJuego
+
+Colmena -r-> Posición
+Misil -r-> Posición
+PowerUpVida -u-> Posición
+Nave -r-> Posición
+Ovni -r-> Posición
+
+Misil --> MovimientoArriba
+Misil --> MovimientoAbajo
+
+Movimiento <|.u. MovimientoArriba
+Movimiento <|.u. MovimientoAbajo
+Movimiento <|.u. MovimientoDerecha
+Movimiento <|.u. MovimientoIzquierda
+
+Nave --> MovimientoIzquierda
+Nave --> MovimientoDerecha
+Nave --> MovimientoAbajo
+
+NaveEnemiga -u-|> Nave
+NaveJugador -d-|> Nave
+
+Ovni --> MovimientoDerecha
+
+PowerUpVida ..u.|> PowerUp
+
+PowerUpVida -r-> Movimiento
+
+package "PresentacionSpaceInvaders" {
+    enum EstadoDeLaVentana << enumeration >> {
+    + PRINCIPAL:
+    + JUEGO:
+    + PAUSA:
+    + JUEGO_TERMINADO:
+    }
+    enum AcciónUsuario << enumeration >> {
+    + ABAJO:
+    + DISPARAR:
+    + ARRIBA:
+    + DERECHA:
+    + IZQUIERDA:
+    + CONFIRMAR:
+    + PAUSA:
+    }
     class AdministradorArchivos {
         +obtenerURLRecurso(String, int): String
     }
+    class AdministradorColisiones {
+    + colisionaMisilesEnemigosConMisilesJugador(ArrayList<Misil>, ArrayList<Misil>): void
+    + colisionarEnemigosConJugador(NaveEnemiga[][], NaveJugador): void
+    + colisionaPowerUpConNaveJugador(ArrayList<PowerUpVida>, NaveJugador): void
+    + colisionaJugadorConMisilDeEnemigos(ArrayList<Misil>, NaveJugador): void
+    + colisionaEnemigoConMisilDeJugador(NaveEnemiga[][], ArrayList<Misil>, NaveJugador): void
+    + evitarColisionarConBordesDeLaPantallaJugador(NaveJugador): void
+    + colisionaBarreraConMisilJugador(ArrayList<Misil>, Barrera[]): void
+    + colisionaConBordesDeLaPantalla(int): boolean
+    + colisionaOvniConMisilDeNaveJugador(ArrayList<Ovni>, ArrayList<Misil>, NaveJugador): void
+    }
     class AdministradorEventoTeclas {
-        -teclaDirección: HashMap<Integer, Dirección>
-        -direcciónMovimiento: Dirección
-        +keyPressed(KeyEvent): void
-        +obtenerDirecciónMovimiento(): Dirección
-        +keyTyped(KeyEvent): void
-        +keyReleased(KeyEvent): void
+    - estadoDeLaVentanaActual: EstadoDeLaVentana
+    - accionesActivas: HashMap<AcciónUsuario, Boolean>
+    - mapaTeclas: HashMap<Integer, AcciónUsuario>
+    ~ acción: AcciónUsuario
+    + limpiarAcción(): AcciónUsuario
+    + cambiarEstadoActualDeLaVentana(EstadoDeLaVentana): void
+    + obtenerAcción(): AcciónUsuario
+    + keyPressed(KeyEvent): void
+    + keyTyped(KeyEvent): void
+    + keyReleased(KeyEvent): void
     }
-
-    abstract class Pintor {
-        #índiceActualImagen: int
-        -nombre: String
-        +RENDERIZAR_EN: int
-        -últimaActualización: long
-        +obtenerÍndiceActualImagen(): int
-        +obtenerNombre(): String
-        +actualizarImagenEntidad(): void
+    class AdministradorSonido {
+    - clip: Clip
+    - direcciónSonido: HashMap<Sonido, URL>
+    ~ clipTiempo: long
+    - clipMúsica: Clip
+    + detenerMusicaFondo(): void
+    + reproducirMusicaFondo(): void
+    + reproducir(): void
+    + ponerMusicaFondo(): void
+    + ponerSonido(Sonido): void
+    + reanudarMusicaFondo(): void
     }
-    class PintorEnemigo {
-        -mapaNúmerosEntidad: int[][]
-        -RENDERIZADO_ENEMIGO: int
-        -últimaActualización: long
-        +actualizarImagenEntidad(): void
-        +dibujar(Graphics2D, Integer, int, int): void
-        +cargarMapaEnemigo(String): void
+    class PintorColmena {
+    - pintorEnemigos: ArrayList<PintorEntidad>
+    + dibujar(Graphics2D, NaveEnemiga[][]): void
     }
     class PintorEntidad {
-        +NÚMERO_MÁXIMO_SPRITES_ENTIDAD: int
-        -imágenesNaveEntidad: ArrayList<BufferedImage>
-        -configurarSpritesJugador(): void
-        +dibujar(Graphics2D, Integer, int, int): void
-        +obtenerImágenesNaveEntidad(): ArrayList<BufferedImage>
+    - nombre: String
+    - índiceActualImagen: int
+    - últimaActualización: long
+    - imágenesNaveEntidad: ArrayList<BufferedImage>
+    - númeroMáximoDeSprite: int
+    + obtenerÍndiceActualImagen(): int
+    + cambiarÚltimaActualización(long): void
+    + obtenerÚltimaActualización(): long
+    + dibujar(Graphics2D, int, int): void
+    + actualizarImagenEntidad(int, int): void
+    + obtenerImágenesNaveEntidad(): ArrayList<BufferedImage>
+    - configurarSprites(): void
+    + cambiarÍndiceActualImagen(int): void
     }
-    class PintorJugador {
-        +dibujar(Graphics2D, Integer, int, int): void
+    enum Sonido << enumeration >> {
+    + SONIDO_DE_BALA:
+    + OPCIÓN:
+    + JUEGO:
     }
-    class VentanaAdministradora {
-        -MÁXIMA_CANTIDAD_FILAS: int
-        +ESCALA_ENTIDAD: int
-        -ALTO_VENTANA: int
-        -MÁXIMA_CANTIDAD_COLUMNAS: int
-        +TAMAÑO_ENTIDAD: int
-        +TAMAÑO_ESTÁNDAR_ENTIDAD: int
-        -ANCHO_VENTANA: int
-        +obtenerAnchoVentana(): int
-        +obtenerAltoVentana(): int
-        +obtenerTamañoEntidad(): int
-        +crearVentana(JPanel): JFrame
-    }
-    class VentanaJuego {
-        +FPS_JUEGO: int
-        -administradorTeclas: AdministradorEventoTeclas
-        -naveJugador: NaveJugador
-        -pintorEnemigos: ArrayList<PintorEnemigo>
-        -hiloJuego: Thread
-        -fondoJuego: BufferedImage
-        -naveEnemiga: NaveEnemiga
-        -pintorJugador: PintorJugador
-        -configurarVentana(): void
-        #paintComponent(Graphics): void
-        +run(): void
-        -cargarImagenDeFondo(): void
-        +update(): void
-        +iniciarHiloJuego(): void
-    }
-    class VentanaPrincipal {
-        -instancia: VentanaPrincipal
-        -ventana: JFrame
-        -crearBotónIniciarJuego(): JPanel
-        -abrirVentanaJuego(): void
-        +obtenerVentana(): VentanaPrincipal
-        -configurarVentana(): void
-    }
-    PintorEntidad -u-|> Pintor
-    PintorEnemigo -u-|> Pintor
-    PintorJugador -u-|> Pintor
-    VentanaAdministradora -l-> VentanaPrincipal
-    VentanaAdministradora --> VentanaJuego
 }
-SpaceInvaders --> "Presentación"
-MovimientoJugador -d-> "AdministradorEventoTeclas"
+
+AdministradorColisiones ..> NaveEnemiga
+AdministradorColisiones ..> NaveJugador
+AdministradorColisiones ..> Misil
+AdministradorColisiones ..> PowerUpVida
+AdministradorColisiones ..> Barrera
+AdministradorColisiones ..> Ovni
+
+AdministradorEventoTeclas --d> EstadoDeLaVentana
+AdministradorEventoTeclas --> AcciónUsuario
+
+AdministradorSonido --> Sonido
+
+PintorColmena ...> NaveEnemiga
+PintorColmena --> PintorEntidad
+
+
+VentanaAdministradora ...> VentanaJuego
+VentanaJuego -l->"1..*" PintorEntidad
+VentanaJuego -l->"1" PintorColmena
+VentanaJuego -l->"1" AdministradorEventoTeclas
+VentanaJuego -l->"1" AdministradorSonido
+VentanaJuego -l->"1" AdministradorArchivos
+
+VentanaJuego --u->"0..*" Misil
+VentanaJuego --u->"1" NaveJugador
+VentanaJuego --u->"1" Colmena
+VentanaJuego --u->"5" Barrera
+VentanaJuego --u->"0..*" PowerUp
+VentanaJuego --u->"0..*" Ovni
+VentanaJuego --u->"24" NaveEnemiga
+VentanaJuego --u->"1" EstadoDeLaVentana
+
 @enduml
