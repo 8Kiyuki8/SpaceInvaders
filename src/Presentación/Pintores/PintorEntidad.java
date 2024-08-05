@@ -2,31 +2,44 @@ package Presentación.Pintores;
 
 import Presentación.Servicios.AdministradorArchivos;
 
+import java.awt.*;
 import java.util.*;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-public abstract class PintorEntidad {
-  protected int índiceActualImagen = 0;
+public class PintorEntidad {
+  private int índiceActualImagen = 0;
   private long últimaActualización = System.nanoTime();
   private final String nombre;
 
   private final ArrayList<BufferedImage> imágenesNaveEntidad = new ArrayList<>();
+  private final int númeroMáximoDeSprite;
 
-  public PintorEntidad(String nombre) {
+  public PintorEntidad(String nombre, int númeroMáximoDeSprite) {
     this.nombre = nombre;
-    configurarSpritesJugador();
+    this.númeroMáximoDeSprite = númeroMáximoDeSprite;
+    configurarSprites();
   }
 
-  public abstract void actualizarImagenEntidad();
+  public void dibujar(Graphics2D graphics2D, int posiciónX, int posiciónY) {
+    graphics2D.drawImage(obtenerImágenesNaveEntidad().get(obtenerÍndiceActualImagen()), posiciónX,
+      posiciónY,
+      null);
+  }
 
-  public abstract int obtenerNúmeroMáximoDeSprite();
+  public void actualizarImagenEntidad(int tiempoDeRenderizado, int numeroMáximoSpritesEntidad) {
+    long tiempoActual = System.nanoTime();
+    if ((tiempoActual - obtenerÚltimaActualización()) >= tiempoDeRenderizado * 10000000L) {
+      cambiarÍndiceActualImagen((obtenerÍndiceActualImagen() + 1) % numeroMáximoSpritesEntidad);
+      cambiarÚltimaActualización(tiempoActual);
+    }
+  }
 
-  private void configurarSpritesJugador() {
+  private void configurarSprites() {
     AdministradorArchivos administradorArchivos = new AdministradorArchivos();
-    for (int i = 0; i < obtenerNúmeroMáximoDeSprite(); i += 1) {
-      String fileName = administradorArchivos.obtenerURLRecurso(obtenerNombre(), i);
+    for (int i = 0; i < númeroMáximoDeSprite; i += 1) {
+      String fileName = administradorArchivos.obtenerURLRecurso(nombre, i);
       try {
         imágenesNaveEntidad.add(ImageIO.read(
             Objects.requireNonNull(getClass().getResourceAsStream(fileName))
@@ -46,10 +59,6 @@ public abstract class PintorEntidad {
     return índiceActualImagen;
   }
 
-  public String obtenerNombre() {
-    return nombre;
-  }
-
   public long obtenerÚltimaActualización() {
     return últimaActualización;
   }
@@ -61,5 +70,4 @@ public abstract class PintorEntidad {
   public void cambiarÍndiceActualImagen(int índiceActualImagen) {
     this.índiceActualImagen = índiceActualImagen;
   }
-
 }

@@ -35,7 +35,6 @@ public class Colmena {
             (j * VentanaJuego.obtenerTamañoEntidad()) + posición.obtenerPosiciónX(),
             (i * VentanaJuego.obtenerTamañoEntidad() + posición.obtenerPosiciónY())
           ), puntuacion
-
         );
       }
     }

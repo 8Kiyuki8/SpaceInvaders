@@ -18,5 +18,4 @@ public class NaveEnemiga extends Nave {
     return new Misil(
       new Posición(obtenerPosición().obtenerPosiciónX(), obtenerPosición().obtenerPosiciónY()), VELOCIDAD_MISIL_NAVE);
   }
-
 }

@@ -9,5 +9,4 @@ public interface PowerUp {
   void caerPowerUp();
 
   Posición obtenerPosiciónPowerUp();
-
 }

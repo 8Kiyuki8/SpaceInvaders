@@ -8,7 +8,6 @@ public class Barrera {
   private final Posición posición;
   private int vidas = 15;
 
-
   public Barrera(Posición posición) {
     this.posición = posición;
   }
@@ -19,12 +18,11 @@ public class Barrera {
 
   public Rectangle obtenerÁreaColisión() {
     int hitBox = 24;
-    Rectangle rectBarrera = new Rectangle(obtenerPosición().obtenerPosiciónX(),
+    return new Rectangle(obtenerPosición().obtenerPosiciónX(),
       obtenerPosición().obtenerPosiciónY(),
       VentanaJuego.obtenerTamañoEntidad() - hitBox,
       VentanaJuego.obtenerTamañoEntidad() - hitBox
     );
-    return rectBarrera;
   }
 
   public void reducirVida() {
