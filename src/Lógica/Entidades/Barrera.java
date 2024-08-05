@@ -3,8 +3,10 @@ package Lógica.Entidades;
 import Presentación.Ventanas.VentanaJuego;
 
 import java.awt.*;
+import java.io.Serial;
+import java.io.Serializable;
 
-public class Barrera {
+public class Barrera implements Serializable {
   private final Posición posición;
   private int vidas = 15;
 

@@ -1,6 +1,8 @@
 package Lógica.Entidades;
 
-public class Posición {
+import java.io.Serializable;
+
+public class Posición implements Serializable {
 
   private int posiciónX;
   private int posiciónY;

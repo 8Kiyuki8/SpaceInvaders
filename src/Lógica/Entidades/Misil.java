@@ -5,8 +5,9 @@ import Lógica.MovimientoEntidades.MovimientoArriba;
 import Presentación.Ventanas.VentanaJuego;
 
 import java.awt.*;
+import java.io.Serializable;
 
-public class Misil {
+public class Misil implements Serializable {
   private Posición posicion;
   private final MovimientoArriba movimientoArriba;
   private final MovimientoAbajo movimientoAbajo;
