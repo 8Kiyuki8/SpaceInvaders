@@ -1,6 +1,8 @@
 package Lógica.Entidades;
 
-public class NaveEnemiga extends Nave {
+import java.io.Serializable;
+
+public class NaveEnemiga extends Nave implements Serializable {
   private static final int VELOCIDAD_NAVE = 2;
   private static final int VELOCIDAD_MISIL_NAVE = 4;
   private final int puntajeNave;

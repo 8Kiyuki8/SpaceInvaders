@@ -4,8 +4,9 @@ import Lógica.MovimientoEntidades.MovimientoDerecha;
 import Presentación.Ventanas.VentanaJuego;
 
 import java.awt.*;
+import java.io.Serializable;
 
-public class Ovni {
+public class Ovni implements Serializable {
   private static final int VELOCIDAD_OVNI = 3;
   private static final int PUNTUACION_OVNI = 50;
   private Posición posición;

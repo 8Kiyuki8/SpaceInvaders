@@ -6,8 +6,9 @@ import Lógica.MovimientoEntidades.MovimientoIzquierda;
 import Presentación.Ventanas.VentanaJuego;
 
 import java.awt.*;
+import java.io.Serializable;
 
-public abstract class Nave {
+public abstract class Nave implements Serializable {
   private final MovimientoIzquierda movimientoIzquierda;
   private final MovimientoDerecha movimientoDerecha;
   private final MovimientoAbajo movimientoAbajo;
