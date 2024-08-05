@@ -32,5 +32,4 @@ public class NaveJugador extends Nave {
       super.establecerVida(nuevaVida);
     }
   }
-
 }

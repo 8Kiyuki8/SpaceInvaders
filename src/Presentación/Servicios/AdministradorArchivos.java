@@ -29,6 +29,5 @@ public class AdministradorArchivos {
       System.out.println("Error de dirección de URL: " + e.getMessage());
       return null;
     }
-
   }
 }

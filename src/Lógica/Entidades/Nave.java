@@ -28,7 +28,6 @@ public abstract class Nave {
     this.vida = vidaDeNave;
   }
 
-
   public void establecerVida(int nuevaVida) {
     vida = nuevaVida;
   }
