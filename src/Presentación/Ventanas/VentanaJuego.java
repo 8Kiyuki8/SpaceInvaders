@@ -1,23 +1,24 @@
 package Presentación.Ventanas;
 
 import Lógica.Entidades.*;
-import Presentación.Servicios.AdministradorColisiones;
+import Presentación.Servicios.*;
 import Presentación.Enumeraciones.AcciónUsuario;
 import Presentación.Enumeraciones.EstadoDeLaVentana;
 import Presentación.Enumeraciones.Sonido;
 import Presentación.Pintores.*;
-import Presentación.Servicios.AdministradorEventoTeclas;
-import Presentación.Servicios.AdministradorSonido;
+import Utilidades.EscrituraDeJuego;
+import Utilidades.GuardarPartida;
 
 
 import java.awt.*;
 import javax.swing.*;
+import java.io.Serializable;
 import java.util.*;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-public class VentanaJuego extends JPanel implements Runnable {
+public class VentanaJuego extends JPanel implements Runnable, Serializable {
   //Constantes
   public static final int TAMAÑO_ESTÁNDAR_ENTIDAD = 16;
   public static final int ESCALA_ENTIDAD = 3;
@@ -224,6 +225,9 @@ public class VentanaJuego extends JPanel implements Runnable {
           tiempoDeInicioDeJuego = System.currentTimeMillis();
           administradorTeclas.cambiarEstadoActualDeLaVentana(estadoDeLaVentanaActual);
         }
+      } else if (acción == AcciónUsuario.CONFIRMAR && opciónDeUsuario == 1) {
+        //reiniciarJuego();
+        cargarPartida();
       } else if (acción == AcciónUsuario.CONFIRMAR && opciónDeUsuario == 2) {
         System.exit(0);
       }
@@ -248,7 +252,9 @@ public class VentanaJuego extends JPanel implements Runnable {
           if (opciónDeUsuario == 0) {
             reanudarJuego();
           } else if (opciónDeUsuario == 1) {
-            //todo: GUARDAR juego
+            guardarPartida();
+            //JOptionPane.showMessageDialog(null, "Partida guardada con éxito");
+
           } else if (opciónDeUsuario == 2) {
             reiniciarJuego();
             administradorTeclas.cambiarEstadoActualDeLaVentana(estadoDeLaVentanaActual);
@@ -351,6 +357,8 @@ public class VentanaJuego extends JPanel implements Runnable {
   private void reiniciarJuego() {
     generarNaveJugador();
     generarColmena();
+    generarBarreras();
+    moviendoDerecha = true;
 
     misilesJugador.clear();
     misilesEnemigos.clear();
@@ -634,5 +642,46 @@ public class VentanaJuego extends JPanel implements Runnable {
 
   public static int obtenerTamañoEntidad() {
     return TAMAÑO_ENTIDAD;
+  }
+
+  private void guardarPartida() {
+    EscrituraDeJuego escrituraDeJuego = new EscrituraDeJuego();
+    escrituraDeJuego.setNaveJugador(naveJugador);
+    escrituraDeJuego.setNavesEnemigas(navesEnemigas);
+    escrituraDeJuego.setBarreras(barreras);
+    escrituraDeJuego.setMisilesJugador(misilesJugador);
+    escrituraDeJuego.setMisilesEnemigos(misilesEnemigos);
+    escrituraDeJuego.setOvnis(ovnis);
+    escrituraDeJuego.setMoviendoDerecha(moviendoDerecha);
+    escrituraDeJuego.setColmenaDescendiendo(colmenaDescendiendo);
+    escrituraDeJuego.setDistanciaDescendida(distanciaDescendida);
+    escrituraDeJuego.setTiempoDeInicioDeJuego(tiempoDeInicioDeJuego);
+
+    try {
+      GuardarPartida.guardarEstado(escrituraDeJuego);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  private void cargarPartida() {
+    try {
+      EscrituraDeJuego escrituraDeJuego = GuardarPartida.cargarEstado();
+      naveJugador = escrituraDeJuego.obtenerNaveJugador();
+      navesEnemigas = escrituraDeJuego.obtenerNavesEnemigas();
+      barreras = escrituraDeJuego.obtenerBarreras();
+      misilesJugador = escrituraDeJuego.obtenerMisilesJugador();
+      misilesEnemigos = escrituraDeJuego.obtenerMisilesEnemigos();
+      ovnis = escrituraDeJuego.obtenerOvnis();
+      moviendoDerecha = escrituraDeJuego.estaMoviendoDerecha();
+      colmenaDescendiendo = escrituraDeJuego.estaColmenaDescendiendo();
+      distanciaDescendida = escrituraDeJuego.obtenerDistanciaDescendida();
+      tiempoDeInicioDeJuego = escrituraDeJuego.obtenerTiempoDeInicioDeJuego();
+
+      estadoDeLaVentanaActual = EstadoDeLaVentana.JUEGO;
+      administradorTeclas.cambiarEstadoActualDeLaVentana(estadoDeLaVentanaActual);
+    } catch (IOException | ClassNotFoundException e) {
+      e.printStackTrace();
+    }
   }
 }
