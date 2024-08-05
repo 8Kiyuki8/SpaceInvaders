@@ -34,5 +34,4 @@ public class NaveJugador extends Nave implements Serializable {
       super.establecerVida(nuevaVida);
     }
   }
-
 }

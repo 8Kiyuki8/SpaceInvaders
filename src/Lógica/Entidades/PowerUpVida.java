@@ -41,7 +41,7 @@ public class PowerUpVida implements PowerUp {
     return new PowerUpVida(nuevaPosición);
   }
 
-  public Rectangle obtenerÁreaColisión() {
+  public Rectangle obtenerÁrea() {
     int hitBox = 24;
     Rectangle rectPowerUp = new Rectangle(obtenerPosiciónPowerUp().obtenerPosiciónX(),
       obtenerPosiciónPowerUp().obtenerPosiciónY(),

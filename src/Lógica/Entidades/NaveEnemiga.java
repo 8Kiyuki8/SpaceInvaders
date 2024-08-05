@@ -20,5 +20,4 @@ public class NaveEnemiga extends Nave implements Serializable {
     return new Misil(
       new Posición(obtenerPosición().obtenerPosiciónX(), obtenerPosición().obtenerPosiciónY()), VELOCIDAD_MISIL_NAVE);
   }
-
 }

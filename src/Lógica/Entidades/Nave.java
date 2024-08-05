@@ -29,7 +29,6 @@ public abstract class Nave implements Serializable {
     this.vida = vidaDeNave;
   }
 
-
   public void establecerVida(int nuevaVida) {
     vida = nuevaVida;
   }
@@ -54,7 +53,7 @@ public abstract class Nave implements Serializable {
     movimientoAbajo.mover(posición, velocidad);
   }
 
-  public Rectangle obtenerÁreaColisión() {
+  public Rectangle obtenerÁrea() {
     int hitBox = 24;
     Rectangle rectNave = new Rectangle(obtenerPosición().obtenerPosiciónX(),
       obtenerPosición().obtenerPosiciónY(),

@@ -18,14 +18,13 @@ public class Barrera implements Serializable {
     return posición;
   }
 
-  public Rectangle obtenerÁreaColisión() {
+  public Rectangle obtenerÁrea() {
     int hitBox = 24;
-    Rectangle rectBarrera = new Rectangle(obtenerPosición().obtenerPosiciónX(),
+    return new Rectangle(obtenerPosición().obtenerPosiciónX(),
       obtenerPosición().obtenerPosiciónY(),
       VentanaJuego.obtenerTamañoEntidad() - hitBox,
       VentanaJuego.obtenerTamañoEntidad() - hitBox
     );
-    return rectBarrera;
   }
 
   public void reducirVida() {

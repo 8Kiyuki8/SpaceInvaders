@@ -27,5 +27,4 @@ public class Posición implements Serializable {
   public void establecerPosiciónY(int nuevaPosiciónY) {
     posiciónY = nuevaPosiciónY;
   }
-
 }

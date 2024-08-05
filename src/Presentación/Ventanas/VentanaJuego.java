@@ -9,7 +9,6 @@ import Presentación.Pintores.*;
 import Utilidades.EscrituraDeJuego;
 import Utilidades.GuardarPartida;
 
-
 import java.awt.*;
 import javax.swing.*;
 import java.io.Serializable;
@@ -42,26 +41,24 @@ public class VentanaJuego extends JPanel implements Runnable, Serializable {
   private EstadoDeLaVentana estadoDeLaVentanaActual;
   private boolean enPausa;
 
-
   //Pintores
-  private final PintorJugador pintorJugador = new PintorJugador("Jugador");
+  private final PintorEntidad pintorJugador = new PintorEntidad("Jugador", 4);
   private final PintorColmena pintorColmena = new PintorColmena();
-  private final PintorMisilJugador pintorMisilJugador = new PintorMisilJugador("MisilJugador");
-  private final PintorMisilEnemigos pintorMisilEnemigos = new PintorMisilEnemigos("MisilEnemigos");
-  private final PintorPowerUpVida pintorPowerUpVida = new PintorPowerUpVida("PowerUpVida");
-  private final PintorOvni pintorOvni = new PintorOvni("Ovni");
-  private final PintorBarrera pintorBarrera = new PintorBarrera("Barrera");
+  private final PintorEntidad pintorMisilJugador = new PintorEntidad("MisilJugador", 1);
+  private final PintorEntidad pintorMisilEnemigos = new PintorEntidad("MisilEnemigos", 1);
+  private final PintorEntidad pintorPowerUpVida = new PintorEntidad("PowerUpVida", 1);
+  private final PintorEntidad pintorOvni = new PintorEntidad("Ovni", 4);
+  private final PintorEntidad pintorBarrera = new PintorEntidad("Barrera", 1);
 
   //Entidades
   private NaveJugador naveJugador;
   private NaveEnemiga[][] navesEnemigas;
-  private PowerUpVida powerUpVida;
   private Barrera[] barreras;
 
-  private ArrayList<Misil> misilesJugador = new ArrayList<>();
-  private ArrayList<Misil> misilesEnemigos = new ArrayList<>();
-  private ArrayList<PowerUpVida> powerUpVidas = new ArrayList<>();
-  private ArrayList<Ovni> ovnis = new ArrayList<>();
+  private final ArrayList<Misil> misilesJugador = new ArrayList<>();
+  private final ArrayList<Misil> misilesEnemigos = new ArrayList<>();
+  private final ArrayList<PowerUpVida> powerUpVidas = new ArrayList<>();
+  private final ArrayList<Ovni> ovnis = new ArrayList<>();
   private Colmena colmena;
 
   //MovimientoColmena
@@ -86,9 +83,8 @@ public class VentanaJuego extends JPanel implements Runnable, Serializable {
   private BufferedImage fondoJuego;
 
   //Administradores de Eventos
-  private AdministradorSonido administradorSonido = new AdministradorSonido();
+  private final AdministradorSonido administradorSonido = new AdministradorSonido();
   private final AdministradorEventoTeclas administradorTeclas = new AdministradorEventoTeclas();
-
 
   public VentanaJuego() {
     estadoDeLaVentanaActual = EstadoDeLaVentana.PRINCIPAL;
@@ -181,7 +177,7 @@ public class VentanaJuego extends JPanel implements Runnable, Serializable {
   private void cargarImagenDeFondoDeMenúPrincipal() {
     try {
       fondoMenúPrincipal = ImageIO.read(
-        Objects.requireNonNull(getClass().getResource("/Presentación/Recursos/FondoDeJuego/fondodejuego.png")));
+        Objects.requireNonNull(getClass().getResource("/Presentación/Recursos/FondoDeJuego/fondodemenu.png")));
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -295,7 +291,6 @@ public class VentanaJuego extends JPanel implements Runnable, Serializable {
         }
       }
     }
-
     administradorTeclas.limpiarAcción();
   }
 
@@ -325,7 +320,7 @@ public class VentanaJuego extends JPanel implements Runnable, Serializable {
     misilesEnemigos.removeIf(misil -> misil.obtenerPosiciónMisil().obtenerPosiciónY() > getHeight());
 
     if (tiempoActual - últimoTiempoEntrePowerUps >= TIEMPO_ENTRE_POWER_UPS) {
-      powerUpVidas.add(powerUpVida.generarPowerUpVida());
+      powerUpVidas.add(PowerUpVida.generarPowerUpVida());
       últimoTiempoEntrePowerUps = tiempoActual;
     }
     powerUpVidas.forEach(PowerUpVida::caerPowerUp);
@@ -348,18 +343,18 @@ public class VentanaJuego extends JPanel implements Runnable, Serializable {
     AdministradorColisiones.colisionaPowerUpConNaveJugador(powerUpVidas, naveJugador);
     generarNuevaColmena();
     actualizarMovimientoColmena(navesEnemigas);
-    pintorJugador.actualizarImagenEntidad();
+    pintorJugador.actualizarImagenEntidad(1, 4);
     verificarVidaJugador();
     administradorTeclas.limpiarAcción();
-
   }
 
   private void reiniciarJuego() {
     generarNaveJugador();
     generarColmena();
     generarBarreras();
+    
     moviendoDerecha = true;
-
+    
     misilesJugador.clear();
     misilesEnemigos.clear();
     powerUpVidas.clear();
@@ -459,12 +454,17 @@ public class VentanaJuego extends JPanel implements Runnable, Serializable {
     int x = obtenerXParaTextoCentrado(text, graphics2D);
     int y = TAMAÑO_ENTIDAD * 3;
 
-    graphics2D.setColor(Color.gray);
+    graphics2D.setColor(Color.YELLOW);
     graphics2D.drawString(text, x + 3, y + 3);
-    graphics2D.setColor(Color.white);
+    graphics2D.setColor(Color.green);
     graphics2D.drawString(text, x, y);
 
     graphics2D.setFont(graphics2D.getFont().deriveFont(Font.BOLD, 42F));
+
+    text = "PUNTAJE:  ";
+    x = obtenerXParaTextoCentrado(text, graphics2D);
+    y += TAMAÑO_ENTIDAD * 2;
+    graphics2D.drawString(text + naveJugador.obtenerPuntos(), x + 42 - TAMAÑO_ENTIDAD, y);
 
     text = "VOLVER A JUGAR";
     x = obtenerXParaTextoCentrado(text, graphics2D);
@@ -491,9 +491,9 @@ public class VentanaJuego extends JPanel implements Runnable, Serializable {
     int x = obtenerXParaTextoCentrado(text, graphics2D);
     int y = TAMAÑO_ENTIDAD * 3;
 
-    graphics2D.setColor(Color.gray);
+    graphics2D.setColor(Color.blue);
     graphics2D.drawString(text, x + 3, y + 3);
-    graphics2D.setColor(Color.white);
+    graphics2D.setColor(Color.cyan);
     graphics2D.drawString(text, x, y);
 
     graphics2D.setFont(graphics2D.getFont().deriveFont(Font.BOLD, 42F));
@@ -531,9 +531,9 @@ public class VentanaJuego extends JPanel implements Runnable, Serializable {
     int x = obtenerXParaTextoCentrado(texto, graphics2D);
     int y = TAMAÑO_ENTIDAD * 3;
 
-    graphics2D.setColor(Color.gray);
+    graphics2D.setColor(Color.yellow);
     graphics2D.drawString(texto, x + 3, y + 3);
-    graphics2D.setColor(Color.white);
+    graphics2D.setColor(Color.orange);
     graphics2D.drawString(texto, x, y);
 
     graphics2D.setFont(graphics2D.getFont().deriveFont(Font.BOLD, 42F));
@@ -567,7 +567,7 @@ public class VentanaJuego extends JPanel implements Runnable, Serializable {
     graphics2D.drawImage(fondoJuego, 0, 0, getWidth(), getHeight(), this);
 
     graphics2D.setFont(graphics2D.getFont().deriveFont(Font.PLAIN, 14F));
-    graphics2D.setColor(Color.LIGHT_GRAY);
+    graphics2D.setColor(Color.pink);
     graphics2D.drawString("Puntos: " + naveJugador.obtenerPuntos(), 10, 25);
     graphics2D.drawString("Vidas: " + naveJugador.obtenerVida(), 10, 50);
     long tiempoActual = System.currentTimeMillis();
@@ -583,19 +583,19 @@ public class VentanaJuego extends JPanel implements Runnable, Serializable {
       naveJugador.obtenerPosición().obtenerPosiciónX(), naveJugador.obtenerPosición().obtenerPosiciónY());
     for (Misil misil : misilesJugador) {
       pintorMisilJugador.dibujar(graphics2D, misil.obtenerPosiciónMisil().obtenerPosiciónX(), misil.obtenerPosiciónMisil().obtenerPosiciónY());
-      pintorMisilJugador.actualizarImagenEntidad();
+      pintorMisilJugador.actualizarImagenEntidad(1, 1);
     }
     for (Misil misil : misilesEnemigos) {
       pintorMisilEnemigos.dibujar(graphics2D, misil.obtenerPosiciónMisil().obtenerPosiciónX(), misil.obtenerPosiciónMisil().obtenerPosiciónY());
-      pintorMisilEnemigos.actualizarImagenEntidad();
+      pintorMisilEnemigos.actualizarImagenEntidad(1, 1);
     }
     for (PowerUpVida powerUpVida : powerUpVidas) {
       pintorPowerUpVida.dibujar(graphics2D, powerUpVida.obtenerPosiciónPowerUp().obtenerPosiciónX(), powerUpVida.obtenerPosiciónPowerUp().obtenerPosiciónY());
-      pintorPowerUpVida.actualizarImagenEntidad();
+      pintorPowerUpVida.actualizarImagenEntidad(1, 1);
     }
     for (Ovni ovni : ovnis) {
       pintorOvni.dibujar(graphics2D, ovni.obtenerPosiciónOvni().obtenerPosiciónX(), ovni.obtenerPosiciónOvni().obtenerPosiciónY());
-      pintorOvni.actualizarImagenEntidad();
+      pintorOvni.actualizarImagenEntidad(1, 4);
     }
     for (Barrera barrera : barreras) {
       if (barrera != null) {
@@ -610,7 +610,6 @@ public class VentanaJuego extends JPanel implements Runnable, Serializable {
     int tamañoDeTexto;
     tamañoDeTexto = (int) graphics2D.getFontMetrics().getStringBounds(texto, graphics2D).getWidth();
     return (ANCHO_VENTANA / 2) - (tamañoDeTexto / 2);
-
   }
 
   @Override
@@ -634,10 +633,6 @@ public class VentanaJuego extends JPanel implements Runnable, Serializable {
 
   public static int obtenerAnchoVentana() {
     return ANCHO_VENTANA;
-  }
-
-  public static int obtenerAltoVentana() {
-    return ALTO_VENTANA;
   }
 
   public static int obtenerTamañoEntidad() {

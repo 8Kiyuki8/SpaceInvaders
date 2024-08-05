@@ -32,7 +32,7 @@ public class Misil implements Serializable {
     movimientoAbajo.mover(posicion, velocidad);
   }
 
-  public Rectangle obtenerÁreaColisión() {
+  public Rectangle obtenerÁrea() {
     int hitBox = 24;
     Rectangle rectMisil = new Rectangle(obtenerPosiciónMisil().obtenerPosiciónX(),
       obtenerPosiciónMisil().obtenerPosiciónY(),
