@@ -2,9 +2,11 @@ package Presentación.Enumeraciones;
 
 public enum Sonido {
   JUEGO,
-  SONIDO_DE_BALA,
   OPCIÓN,
-  COLISION,
+  OVNI,
+  SONIDO_DE_BALA,
   VIDA,
-  OVNI
+  COLISION_JUGADOR,
+  COLISION_ENEMIGOS,
+  COLISION_MISILES
 }

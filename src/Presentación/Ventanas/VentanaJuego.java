@@ -417,7 +417,7 @@ public class VentanaJuego extends JPanel implements Runnable, Serializable {
         if (enPausa) {
           dibujarMenúPausa(graphics2D);
         }
-        AdministradorColisiones.colisionarEnemigosConJugador(navesEnemigas, naveJugador);
+        AdministradorColisiones.colisionaEnemigosConJugador(navesEnemigas, naveJugador);
         break;
       case JUEGO_TERMINADO:
         pausarMúsica();

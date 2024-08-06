@@ -53,7 +53,7 @@ public class AdministradorColisiones {
     for (int i = misilesEnemigos.size() - 1; i >= 0; i--) {
       Misil misilEnemigo = misilesEnemigos.get(i);
       if (naveJugador.obtenerÁrea().intersects(misilEnemigo.obtenerÁrea())) {
-        VentanaJuego.reproducirSonido(Sonido.COLISION);
+        VentanaJuego.reproducirSonido(Sonido.COLISION_JUGADOR);
         naveJugador.establecerVida(naveJugador.obtenerVida() - 1);
         misilesEnemigos.remove(i);
       }
@@ -67,6 +67,7 @@ public class AdministradorColisiones {
         if (naveEnemiga != null) {
           for (Misil misil : misilesJugador) {
             if (naveEnemiga.obtenerÁrea().intersects(misil.obtenerÁrea())) {
+              VentanaJuego.reproducirSonido(Sonido.COLISION_ENEMIGOS);
               naveJugador.establecerPuntos(naveJugador.obtenerPuntos() + naveEnemiga.obtenerPuntos());
               navesEnemigas[i][j] = null;
               misilesJugador.remove(misil);
@@ -103,6 +104,7 @@ public class AdministradorColisiones {
     for (Misil misilEnemigo : misilesEnemigos) {
       for (Misil misilJugador : misilesJugador) {
         if (misilEnemigo.obtenerÁrea().intersects(misilJugador.obtenerÁrea())) {
+          VentanaJuego.reproducirSonido(Sonido.COLISION_MISILES);
           misilesEnemigosAEliminar.add(misilEnemigo);
           misilesJugadorAEliminar.add(misilJugador);
           break;
@@ -114,14 +116,12 @@ public class AdministradorColisiones {
     misilesJugador.removeAll(misilesJugadorAEliminar);
   }
 
-  public static void colisionarEnemigosConJugador(NaveEnemiga[][] navesEnemigas, NaveJugador naveJugador) {
+  public static void colisionaEnemigosConJugador(NaveEnemiga[][] navesEnemigas, NaveJugador naveJugador) {
     for (int i = 0; i < navesEnemigas.length; i++) {
       for (int j = 0; j < navesEnemigas[i].length; j++) {
         NaveEnemiga naveEnemiga = navesEnemigas[i][j];
         if (naveEnemiga != null) {
-          int filaJugador = naveJugador.obtenerPosición().obtenerPosiciónY();
-          int filaEnemigo = naveEnemiga.obtenerPosición().obtenerPosiciónY();
-          if (filaEnemigo == filaJugador) {
+          if (naveEnemiga.obtenerPosición().obtenerPosiciónY() == naveJugador.obtenerPosición().obtenerPosiciónY()) {
             naveJugador.establecerVida(0);
             return;
           }
