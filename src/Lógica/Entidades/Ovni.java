@@ -8,7 +8,6 @@ import java.io.Serializable;
 
 public class Ovni implements Serializable {
   private static final int VELOCIDAD_OVNI = 2;
-
   private static final int PUNTUACION_OVNI = 50;
   private Posición posición;
   private final MovimientoDerecha movimientoDerecha;
