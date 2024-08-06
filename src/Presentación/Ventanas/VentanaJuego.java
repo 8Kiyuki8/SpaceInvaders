@@ -84,7 +84,7 @@ public class VentanaJuego extends JPanel implements Runnable, Serializable {
   private BufferedImage fondoJuego;
 
   //Administradores de Eventos
-  private final AdministradorSonido administradorSonido = new AdministradorSonido();
+  private static AdministradorSonido administradorSonido = new AdministradorSonido();
   private final AdministradorEventoTeclas administradorTeclas = new AdministradorEventoTeclas();
 
   public VentanaJuego() {
@@ -170,7 +170,7 @@ public class VentanaJuego extends JPanel implements Runnable, Serializable {
     }
   }
 
-  private void reproducirSonido(Sonido sonido) {
+  public static void reproducirSonido(Sonido sonido) {
     administradorSonido.ponerSonido(sonido);
     administradorSonido.reproducir();
   }
@@ -342,9 +342,10 @@ public class VentanaJuego extends JPanel implements Runnable, Serializable {
     AdministradorColisiones.colisionaBarreraConMisilJugador(misilesEnemigos, barreras);
     AdministradorColisiones.colisionaBarreraConMisilJugador(misilesJugador, barreras);
     AdministradorColisiones.colisionaPowerUpConNaveJugador(powerUpVidas, naveJugador);
+
     generarNuevaColmena();
     actualizarMovimientoColmena(navesEnemigas);
-    pintorJugador.actualizarImagenEntidad(1, 4);
+    pintorJugador.actualizarImagenEntidad(6, 4);
     verificarVidaJugador();
     administradorTeclas.limpiarAcción();
   }
@@ -566,17 +567,17 @@ public class VentanaJuego extends JPanel implements Runnable, Serializable {
 
   public void dibujarVentanaJuego(Graphics2D graphics2D) {
     graphics2D.drawImage(fondoJuego, 0, 0, getWidth(), getHeight(), this);
-    graphics2D.setFont(graphics2D.getFont().deriveFont(Font.BOLD, 16F));
+    graphics2D.setFont(graphics2D.getFont().deriveFont(Font.BOLD, 14F));
     graphics2D.setColor(Color.pink);
-    graphics2D.drawString("Puntos: " + naveJugador.obtenerPuntos(), 10, 65);
-    graphics2D.drawString("Vidas: " + naveJugador.obtenerVida(), 10, 90);
+    graphics2D.drawString("Puntos: " + naveJugador.obtenerPuntos(), 10, 25);
+    graphics2D.drawString("Vidas: " + naveJugador.obtenerVida(), 10, 50);
     long tiempoActual = System.currentTimeMillis();
     long tiempoTranscurrido = tiempoActual - tiempoDeInicioDeJuego;
     long segundosTranscurridos = tiempoTranscurrido / 1000;
     long minutosTranscurridos = segundosTranscurridos / 60;
     segundosTranscurridos = segundosTranscurridos % 60;
     String tiempoCadena = String.format("Tiempo: %02d:%02d", minutosTranscurridos, segundosTranscurridos);
-    graphics2D.drawString(tiempoCadena, 10, 115);
+    graphics2D.drawString(tiempoCadena, 10, 75);
     pintorColmena.dibujar(graphics2D, navesEnemigas);
     pintorJugador.dibujar(graphics2D,
       naveJugador.obtenerPosición().obtenerPosiciónX(), naveJugador.obtenerPosición().obtenerPosiciónY());
