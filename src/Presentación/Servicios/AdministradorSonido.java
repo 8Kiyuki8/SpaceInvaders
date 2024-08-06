@@ -17,10 +17,12 @@ public class AdministradorSonido {
   public AdministradorSonido() {
     direcciónSonido.put(Sonido.JUEGO, getClass().getResource("/Presentación/Recursos/Música/juego.wav"));
     direcciónSonido.put(Sonido.OPCIÓN, getClass().getResource("/Presentación/Recursos/Música/cambioOpción.wav"));
+    direcciónSonido.put(Sonido.OVNI, getClass().getResource("/Presentación/Recursos/Música/ovni.wav"));
     direcciónSonido.put(Sonido.SONIDO_DE_BALA, getClass().getResource("/Presentación/Recursos/Música/disparo.wav"));
     direcciónSonido.put(Sonido.VIDA, getClass().getResource("/Presentación/Recursos/Música/vida.wav"));
-    direcciónSonido.put(Sonido.COLISION, getClass().getResource("/Presentación/Recursos/Música/colision.wav"));
-    direcciónSonido.put(Sonido.OVNI, getClass().getResource("/Presentación/Recursos/Música/ovni.wav"));
+    direcciónSonido.put(Sonido.COLISION_JUGADOR, getClass().getResource("/Presentación/Recursos/Música/colisionJugador.wav"));
+    direcciónSonido.put(Sonido.COLISION_ENEMIGOS, getClass().getResource("/Presentación/Recursos/Música/colisionEnemigos.wav"));
+    direcciónSonido.put(Sonido.COLISION_MISILES, getClass().getResource("/Presentación/Recursos/Música/colisionMisiles.wav"));
   }
 
   public void ponerSonido(Sonido sound) {
